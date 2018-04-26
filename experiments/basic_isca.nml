@@ -1,0 +1,134 @@
+! For parameters which are frequently set, in order to keep python scripts tidy and clear, it may be useful to read these from an external namelist file.
+! This example illustrates how to do this for two experiments configured with realistic continents, where the only differences are the choice of surface condition, with one using fixed SSTs and the other Q-fluxes.
+! If you find you have a 'default' set of parameter choices, this method may be useful to ensure these are set consistently for all of your experiments. ! NB Note that this example is for a specific case, and would likely need modifying for your specific set-up.
+
+ &main_nml
+    days   = 30,
+    hours  = 0,
+    minutes = 0,
+    seconds = 0,
+    dt_atmos = 720,
+    current_date = 0001 1 1 0 0 0,
+    calendar = 'thirty_day'/
+
+ &idealized_moist_phys_nml
+    do_damping      = .true.,
+    turb            = .true.,
+    mixed_layer_bc  = .true.,
+    do_virtual      = .false.,
+    do_simple       = .true.,
+    two_stream_gray = .false.,                  !Don't use grey radiation
+    do_rrtm_radiation = .true.,                 !Do use RRTM radiation
+    convection_scheme = 'FULL_BETTS_MILLER',    !Use the full betts-miller convection scheme
+    land_roughness_prefactor = 10.0,            !How much rougher to make land than ocean
+    roughness_mom   = 2.e-04,                   !Ocean roughness lengths
+    roughness_heat  = 2.e-04,                   !Ocean roughness lengths
+    roughness_moist = 2.e-04 /                  !Ocean roughness lengths
+
+ &spectral_dynamics_nml
+    ! Hyperdiffusive damping: This is a reasonable default; 4th order hyperdiffusivity
+    ! with a 1/10 day damping timescale.  If you are having problems with the model
+    ! crashing with small scale, high amplitude, instabilities in the upper
+    ! atmosphere, some options are:
+    ! 1. Increasing the damping coefficient.
+    ! 2. Switch to an high-wavenumber cutoff (this requires some
+    !    resolution-dependent choice of wavenumber and damping coefficient).
+    ! 3. Reduce the damping order to 2.  This will more dramatically impact
+    !    the damping of large-scale waves in the model.
+    damping_order           = 4,
+    damping_coeff           = 1.15740741e-4,  ! [1/10 days]
+    water_correction_limit  = 200.e2,
+    robert_coeff            = 0.03,
+    reference_sea_level_press=1.e5,
+    num_levels              = 40,
+    valid_range_t           = 100. 800.,
+    initial_sphum           = 2.e-6,
+    vert_coord_option       = 'uneven_sigma',
+    ! Set the scale height of the atmosphere.  If you want to focus more on the
+    ! troposphere, and dedicate less model levels to the stratosphere, try
+    ! these model settings:
+    !    scale_heights = 6.0,
+    !    exponent = 7.5,
+    !    surf_res = 0.5
+    surf_res                = 0.2,
+    scale_heights           = 11.0,
+    exponent                = 7.0 /
+
+
+ &vert_turb_driver_nml
+   do_mellor_yamada       = .false.,  ! default: True
+   do_diffusivity         = .true.,   ! default: False
+   do_simple              = .true.,   ! default: False
+   constant_gust          = 0.0,      ! default: 1.0
+   use_tau                = .false./
+
+ &diffusivity_nml
+    do_entrain         = .false.,
+    do_simple          = .true./
+
+ &surface_flux_nml
+    use_virtual_temp = .false.,
+    do_simple  = .true.,
+    old_dtaudv = .true.,
+	land_humidity_prefactor = 0.7 /
+
+ &atmosphere_nml
+    idealized_moist_model = .true. /
+
+ &mixed_layer_nml
+    ! Initial condition of the mixed layer.  This will only be used for the first
+    ! run of any experiment. Subsequent starts will use the state of the mixed
+    ! layer at the final timestep of the previous run.
+    prescribe_initial_dist = .true.,
+    do_qflux = .false.,
+    tconst      = 285.,                 ! [K] Initial temperature
+    delta_T = 0.,                       ! [K] Set latitude contrast in initial temperature profile to zero
+    evaporation = .true.,
+    depth = 20.,                        ! [m] Mixed layer depth
+    land_option = 'none',               !Tell mixed layer to get land mask from input file
+    land_h_capacity_prefactor = 0.1,    !What factor to multiply mixed-layer depth by over land.
+    albedo_value = 0.25,                !Ocean albedo value
+    land_albedo_prefactor = 1.3,        !What factor to multiply ocean albedo by over land
+    update_albedo_from_ice = .false.,   ! (Don't) use the simple ice model to update surface albedo
+    ice_albedo_value = 0.7,             !What value of albedo to use in regions of ice
+    ice_concentration_threshold = 0.5/ !ice concentration threshold above which to make albedo equal to ice_albedo_value
+
+ &betts_miller_nml
+    rhbm   = .7   ,
+    do_simp = .false.,
+    do_shallower = .true./
+
+ &lscale_cond_nml
+    do_simple=.true.,
+    do_evap = .true./
+
+ &sat_vapor_pres_nml
+    do_simple = .true. /
+
+ &damping_driver_nml
+    do_rayleigh   = .true.,
+    trayfric      = -0.5,
+    sponge_pbottom=  150.,  ! [Pa]
+    do_conserve_energy = .true./
+
+ &rrtm_radiation_nml
+     do_read_ozone   = .true.,
+     ozone_file      = 'ozone_1990',
+     solr_cnst       = 1360.,
+	 dt_rad          = 4320 /
+
+
+
+! FMS Framework configuration
+! Settings below this line should not change the dynamics, these are to
+! configure the FMS framework.
+ &diag_manager_nml
+   mix_snapshot_average_fields = .false. /  ! time avg fields are labelled with time in middle of window
+
+ &fms_nml
+   domains_stack_size = 600000 /
+
+ &fms_io_nml
+   threading_write = 'single',
+   fileset_write = 'single' /
+
