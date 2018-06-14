@@ -168,7 +168,7 @@ if __name__=="__main__":
     NCORES=16
     RESOLUTION = 'T42', 40
 
-    qflux_file_list = ['merlis_schneider_30_16']
+    qflux_file_list = ['merlis_schneider_30_16', 'off']
 
     for qflux_file_name in qflux_file_list:
 
@@ -177,13 +177,21 @@ if __name__=="__main__":
         exp.clear_rundir()
 
         exp.diag_table = diag
-        inputfiles.append(os.path.join(base_dir,qflux_file_name+'.nc'))
-        exp.inputfiles = inputfiles
 
-        exp.namelist = namelist.copy()
-        exp.namelist['mixed_layer_nml']['load_qflux'] = True
-        exp.namelist['mixed_layer_nml']['time_varying_qflux'] = False
-        exp.namelist['mixed_layer_nml']['qflux_file_name'] = qflux_file_name
+        if qflux_file_name!='off':
+            inputfiles.append(os.path.join(base_dir,qflux_file_name+'.nc'))
+            exp.inputfiles = inputfiles
+
+            exp.namelist = namelist.copy()
+            exp.namelist['mixed_layer_nml']['load_qflux'] = True
+            exp.namelist['mixed_layer_nml']['time_varying_qflux'] = False
+            exp.namelist['mixed_layer_nml']['qflux_file_name'] = qflux_file_name
+        else:
+
+            exp.inputfiles = inputfiles
+
+            exp.namelist = namelist.copy()
+            exp.namelist['mixed_layer_nml']['load_qflux'] = False
 
         exp.set_resolution(*RESOLUTION)
 
