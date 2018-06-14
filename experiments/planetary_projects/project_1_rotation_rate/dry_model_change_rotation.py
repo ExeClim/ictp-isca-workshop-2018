@@ -105,6 +105,7 @@ namelist = Namelist({
 if __name__=="__main__":
 
     NCORES=16
+    RESOLUTION = 'T42', 25
 
     earth_rot_rate = 7.2921150e-5
 
@@ -121,6 +122,8 @@ if __name__=="__main__":
 
         exp.namelist = namelist.copy()
         exp.namelist['constants_nml']['omega'] = earth_rot_rate * rot_rate_scale
+
+        exp.set_resolution(*RESOLUTION)
 
         exp.run(1, use_restart=False, num_cores=NCORES)
         for i in range(2,121):

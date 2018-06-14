@@ -105,6 +105,7 @@ namelist = Namelist({
 if __name__=="__main__":
 
     NCORES=16
+    RESOLUTION = 'T42', 25
 
     earth_grav = 9.80
 
@@ -124,6 +125,8 @@ if __name__=="__main__":
         #Note that only gravity is changed here, but what else should be kept constant in order to isolate the effect of gravity alone?
         
         exp.namelist['constants_nml']['grav'] = earth_grav * grav_scale
+        
+        exp.set_resolution(*RESOLUTION)
 
         exp.run(1, use_restart=False, num_cores=NCORES)
         for i in range(2,121):

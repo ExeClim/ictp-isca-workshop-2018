@@ -143,7 +143,6 @@ namelist = Namelist({
         'damping_order': 4,             
         'water_correction_limit': 200.e2,
         'reference_sea_level_press':1.0e5,
-        'num_levels':25,      #How many model pressure levels to use
         'valid_range_t':[100.,800.],
         'initial_sphum':[2.e-6],
         'vert_coord_option':'input',#Use the vertical levels from Frierson 2006
@@ -162,6 +161,7 @@ namelist = Namelist({
 if __name__=="__main__":
 
     NCORES=16
+    RESOLUTION = 'T42', 25
 
     make_symmetric_values_list = [False, True]
 
@@ -176,6 +176,8 @@ if __name__=="__main__":
 
         exp.namelist = namelist.copy()
         exp.namelist['spectral_dynamics_nml']['make_symmetric'] = make_symmetric_value
+
+        exp.set_resolution(*RESOLUTION)
 
         exp.run(1, use_restart=False, num_cores=NCORES)
         for i in range(2,121):

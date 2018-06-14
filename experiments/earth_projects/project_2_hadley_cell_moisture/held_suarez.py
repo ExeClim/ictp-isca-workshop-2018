@@ -100,6 +100,7 @@ namelist = Namelist({
 if __name__=="__main__":
 
     NCORES=16
+    RESOLUTION = 'T42', 25
 
     make_symmetric_values_list = [False, True]
 
@@ -114,6 +115,8 @@ if __name__=="__main__":
 
         exp.namelist = namelist.copy()
         exp.namelist['spectral_dynamics_nml']['make_symmetric'] = make_symmetric_value
+
+        exp.set_resolution(*RESOLUTION)
 
         exp.run(1, use_restart=False, num_cores=NCORES)
         for i in range(2,121):

@@ -151,7 +151,6 @@ namelist = Namelist({
         'damping_order': 4,             
         'water_correction_limit': 200.e2,
         'reference_sea_level_press':1.0e5,
-        'num_levels':40,
         'valid_range_t':[100.,800.],
         'initial_sphum':[2.e-6],
         'vert_coord_option':'uneven_sigma',
@@ -166,6 +165,7 @@ namelist = Namelist({
 if __name__=="__main__":
 
     NCORES=16
+    RESOLUTION = 'T42', 40
 
     co2_values_list = [350.,700.,1400.]
 
@@ -180,6 +180,8 @@ if __name__=="__main__":
 
         exp.namelist = namelist.copy()
         exp.namelist['rrtm_radiation_nml']['co2ppmv'] = co2_value
+
+        exp.set_resolution(*RESOLUTION)
 
         exp.run(1, use_restart=False, num_cores=NCORES)
         for i in range(2,121):
