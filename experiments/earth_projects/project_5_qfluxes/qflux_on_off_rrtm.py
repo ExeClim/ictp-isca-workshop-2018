@@ -55,7 +55,7 @@ namelist = Namelist({
      'current_date' : [1,1,1,0,0,0],
      'calendar' : 'thirty_day'
     },
-    
+
     'idealized_moist_phys_nml': {
         'do_damping': True,
         'turb':True,
@@ -64,7 +64,7 @@ namelist = Namelist({
         'do_simple': True,
         'roughness_mom':3.21e-05,
         'roughness_heat':3.21e-05,
-        'roughness_moist':3.21e-05,         
+        'roughness_moist':3.21e-05,
         'two_stream_gray': False, #Use RRTM, not grey radiation:
         'do_rrtm_radiation':True,
         'convection_scheme': 'FULL_BETTS_MILLER' #Use the full Betts-miller convection scheme
@@ -77,7 +77,7 @@ namelist = Namelist({
         'constant_gust': 0.0,          # default: 1.0
         'use_tau': False
     },
-    
+
     'diffusivity_nml': {
         'do_entrain':False,
         'do_simple': True,
@@ -86,7 +86,7 @@ namelist = Namelist({
     'surface_flux_nml': {
         'use_virtual_temp': False,
         'do_simple': True,
-        'old_dtaudv': True    
+        'old_dtaudv': True
     },
 
     'atmosphere_nml': {
@@ -97,31 +97,31 @@ namelist = Namelist({
     'mixed_layer_nml': {
         'tconst' : 285.,
         'prescribe_initial_dist':True,
-        'evaporation':True,    
+        'evaporation':True,
         'albedo_value': 0.25, #set albedo value
         'depth': 10.,
     },
 
     'betts_miller_nml': {
-       'rhbm': .7   , 
-       'do_simp': False, 
-       'do_shallower': True, 
+       'rhbm': .7   ,
+       'do_simp': False,
+       'do_shallower': True,
     },
-    
+
     'lscale_cond_nml': {
         'do_simple':True,
         'do_evap':True
     },
-    
+
     'sat_vapor_pres_nml': {
         'do_simple':True
     },
-    
+
     'damping_driver_nml': {
         'do_rayleigh': True,
         'trayfric': -0.5,              # neg. value: time in *days*
         'sponge_pbottom':  150., #Setting the lower pressure boundary for the model sponge layer in Pa.
-        'do_conserve_energy': True,                 
+        'do_conserve_energy': True,
     },
 
     'rrtm_radiation_nml': {
@@ -147,7 +147,7 @@ namelist = Namelist({
     },
 
     'spectral_dynamics_nml': {
-        'damping_order': 4,             
+        'damping_order': 4,
         'water_correction_limit': 200.e2,
         'reference_sea_level_press':1.0e5,
         'valid_range_t':[100.,800.],
@@ -156,17 +156,18 @@ namelist = Namelist({
         'surf_res':0.2, #Parameter that sets the vertical distribution of sigma levels
         'scale_heights' : 11.0,
         'exponent':7.0,
-        'robert_coeff':0.03        
+        'robert_coeff':0.03
     },
 
     'qflux_nml': {
         'qflux_amp':30.,
         'qflux_width':16.,
     },
-})    
+})
 
 #Lets do a run!
 if __name__=="__main__":
+    cb.compile()
 
     NCORES=16
     RESOLUTION = 'T42', 40
@@ -175,7 +176,6 @@ if __name__=="__main__":
 
     for do_qflux_value in do_qflux_list:
 
-        cb.compile()
         exp = Experiment('project_5_rrtm_analytic_qflux_'+str(do_qflux_value), codebase=cb)
         exp.clear_rundir()
 

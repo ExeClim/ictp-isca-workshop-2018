@@ -54,7 +54,7 @@ namelist = Namelist({
      'current_date' : [1,1,1,0,0,0],
      'calendar' : 'thirty_day'
     },
-    
+
     'idealized_moist_phys_nml': {
         'do_damping': True,
         'turb':True,
@@ -63,7 +63,7 @@ namelist = Namelist({
         'do_simple': True,
         'roughness_mom':3.21e-05,
         'roughness_heat':3.21e-05,
-        'roughness_moist':3.21e-05,         
+        'roughness_moist':3.21e-05,
         'two_stream_gray': False, #Use RRTM, not grey radiation:
         'do_rrtm_radiation':True,
         'convection_scheme': 'FULL_BETTS_MILLER', #Use the full Betts-miller convection schemei
@@ -79,7 +79,7 @@ namelist = Namelist({
         'constant_gust': 0.0,          # default: 1.0
         'use_tau': False
     },
-    
+
     'diffusivity_nml': {
         'do_entrain':False,
         'do_simple': True,
@@ -99,35 +99,35 @@ namelist = Namelist({
     'mixed_layer_nml': {
         'tconst' : 285.,
         'prescribe_initial_dist':True,
-        'evaporation':True,    
+        'evaporation':True,
         'depth': 20., #Use shallow mixed-layer depth
         'albedo_value': 0.25, #set albedo value
-        'do_qflux' : False, #Do not use prescribed form for q-fluxes            
+        'do_qflux' : False, #Do not use prescribed form for q-fluxes
         'land_option' : 'input',              #Tell mixed layer to get land mask from input file
-        'land_h_capacity_prefactor' : 0.1,    #What factor to multiply mixed-layer depth by over land. 
-        'land_albedo_prefactor' : 1.3,        #What factor to multiply ocean albedo by over land    
+        'land_h_capacity_prefactor' : 0.1,    #What factor to multiply mixed-layer depth by over land.
+        'land_albedo_prefactor' : 1.3,        #What factor to multiply ocean albedo by over land
     },
 
     'betts_miller_nml': {
-       'rhbm': .7   , 
-       'do_simp': False, 
-       'do_shallower': True, 
+       'rhbm': .7   ,
+       'do_simp': False,
+       'do_shallower': True,
     },
-    
+
     'lscale_cond_nml': {
         'do_simple':True,
         'do_evap':True
     },
-    
+
     'sat_vapor_pres_nml': {
         'do_simple':True
     },
-    
+
     'damping_driver_nml': {
         'do_rayleigh': True,
         'trayfric': -0.5,              # neg. value: time in *days*
         'sponge_pbottom':  150., #Setting the lower pressure boundary for the model sponge layer in Pa.
-        'do_conserve_energy': True,                 
+        'do_conserve_energy': True,
     },
 
     'rrtm_radiation_nml': {
@@ -153,7 +153,7 @@ namelist = Namelist({
     },
 
     'spectral_dynamics_nml': {
-        'damping_order': 4,             
+        'damping_order': 4,
         'water_correction_limit': 200.e2,
         'reference_sea_level_press':1.0e5,
         'num_levels':40,
@@ -164,7 +164,7 @@ namelist = Namelist({
         'scale_heights' : 11.0,
         'exponent':7.0,
         'robert_coeff':0.03,
-        'ocean_topog_smoothing':0.8, 
+        'ocean_topog_smoothing':0.8,
     },
 
     'spectral_init_cond_nml': {
@@ -176,10 +176,11 @@ namelist = Namelist({
         'omega':7.2921150e-5,
     },
 
-})    
+})
 
 #Lets do a run!
 if __name__=="__main__":
+    cb.compile()
 
     NCORES=16
     RESOLUTION = 'T42', 25
@@ -193,9 +194,8 @@ if __name__=="__main__":
             omega_passed = -omega_normal
         else:
             omega_passed = omega_normal
- 
 
-        cb.compile()
+
         exp = Experiment('project_3_omega_'+str(omega_value), codebase=cb)
         exp.clear_rundir()
 

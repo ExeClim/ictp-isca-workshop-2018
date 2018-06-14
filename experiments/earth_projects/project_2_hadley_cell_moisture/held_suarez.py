@@ -98,6 +98,7 @@ namelist = Namelist({
 
 #Lets do a run!
 if __name__=="__main__":
+    cb.compile()
 
     NCORES=16
     RESOLUTION = 'T42', 25
@@ -106,7 +107,6 @@ if __name__=="__main__":
 
     for make_symmetric_value in make_symmetric_values_list:
 
-        cb.compile()
         exp = Experiment('project_2_held_suarez_make_symmetric_'+str(make_symmetric_value), codebase=cb)
         exp.clear_rundir()
 

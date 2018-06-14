@@ -92,17 +92,18 @@ namelist = Namelist({
     'fms_io_nml': {
         'threading_write': 'single',                         # default: multi
         'fileset_write': 'single',                           # default: multi
-    }, 
-    
+    },
+
     'constants_nml': {
         'omega':7.2921150e-5,
     },
-    
+
 })
 
 
 #Lets do a run!
 if __name__=="__main__":
+    cb.compile()
 
     NCORES=16
     RESOLUTION = 'T42', 25
@@ -113,7 +114,6 @@ if __name__=="__main__":
 
     for rot_rate_scale in make_symmetric_values_list:
 
-        cb.compile()
         exp = Experiment('project_1_rotation_rate_earth_multiple_'+str(rot_rate_scale), codebase=cb)
         exp.clear_rundir()
 
