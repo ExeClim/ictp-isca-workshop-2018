@@ -104,3 +104,4 @@ ENV/
 *.log
 
 .*.py
+slurm*
