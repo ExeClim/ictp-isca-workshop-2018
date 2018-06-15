@@ -107,13 +107,13 @@ if __name__=="__main__":
     cb.compile()
 
     NCORES=16
-    RESOLUTION = 'T42', 25
+    RESOLUTION = 'T21', 25
 
     earth_rot_rate = 7.2921150e-5
 
     rotation_rates_earth_multiple = [1, 2, 0.5]
 
-    for rot_rate_scale in make_symmetric_values_list:
+    for rot_rate_scale in rotation_rates_earth_multiple:
 
         exp = Experiment('project_1_rotation_rate_earth_multiple_'+str(rot_rate_scale), codebase=cb)
         exp.clear_rundir()
