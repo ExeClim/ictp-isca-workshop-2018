@@ -93,17 +93,18 @@ namelist = Namelist({
     'fms_io_nml': {
         'threading_write': 'single',                         # default: multi
         'fileset_write': 'single',                           # default: multi
-    }, 
-    
+    },
+
     'constants_nml': {
         'grav':9.80,
     },
-    
+
 })
 
 
 #Lets do a run!
 if __name__=="__main__":
+    cb.compile()
 
     NCORES=16
     RESOLUTION = 'T42', 25
@@ -114,7 +115,6 @@ if __name__=="__main__":
 
     for grav_scale in make_symmetric_values_list:
 
-        cb.compile()
         exp = Experiment('project_2_grav_earth_multiple_'+str(grav_scale), codebase=cb)
         exp.clear_rundir()
 
@@ -122,11 +122,11 @@ if __name__=="__main__":
         exp.inputfiles = inputfiles
 
         exp.namelist = namelist.copy()
-        
+
         #Note that only gravity is changed here, but what else should be kept constant in order to isolate the effect of gravity alone?
-        
+
         exp.namelist['constants_nml']['grav'] = earth_grav * grav_scale
-        
+
         exp.set_resolution(*RESOLUTION)
 
         exp.run(1, use_restart=False, num_cores=NCORES)

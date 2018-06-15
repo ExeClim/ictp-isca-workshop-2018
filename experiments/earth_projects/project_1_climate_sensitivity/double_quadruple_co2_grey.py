@@ -63,9 +63,9 @@ namelist = Namelist({
         'do_simple': True,
         'roughness_mom':3.21e-05,
         'roughness_heat':3.21e-05,
-        'roughness_moist':3.21e-05,            
+        'roughness_moist':3.21e-05,
         'two_stream_gray': True,     #Use the grey radiation scheme
-        'convection_scheme': 'SIMPLE_BETTS_MILLER', #Use simple Betts miller convection            
+        'convection_scheme': 'SIMPLE_BETTS_MILLER', #Use simple Betts miller convection
     },
 
     'vert_turb_driver_nml': {
@@ -75,7 +75,7 @@ namelist = Namelist({
         'constant_gust': 0.0,          # default: 1.0
         'use_tau': False
     },
-    
+
     'diffusivity_nml': {
         'do_entrain':False,
         'do_simple': True,
@@ -84,7 +84,7 @@ namelist = Namelist({
     'surface_flux_nml': {
         'use_virtual_temp': False,
         'do_simple': True,
-        'old_dtaudv': True    
+        'old_dtaudv': True
     },
 
     'atmosphere_nml': {
@@ -95,31 +95,31 @@ namelist = Namelist({
     'mixed_layer_nml': {
         'tconst' : 285.,
         'prescribe_initial_dist':True,
-        'evaporation':True,  
+        'evaporation':True,
         'depth': 2.5,                          #Depth of mixed layer used
-        'albedo_value': 0.38,                  #Albedo value used      
+        'albedo_value': 0.38,                  #Albedo value used
     },
 
     'qe_moist_convection_nml': {
         'rhbm':0.7,
         'Tmin':160.,
-        'Tmax':350.   
+        'Tmax':350.
     },
-    
+
     'lscale_cond_nml': {
         'do_simple':True,
         'do_evap':True
     },
-    
+
     'sat_vapor_pres_nml': {
         'do_simple':True
     },
-    
+
     'damping_driver_nml': {
         'do_rayleigh': True,
         'trayfric': -0.25,              # neg. value: time in *days*
         'sponge_pbottom':  5000., #Bottom of the model's sponge down to 50hPa
-        'do_conserve_energy': True,    
+        'do_conserve_energy': True,
     },
 
     'two_stream_gray_rad_nml': {
@@ -143,7 +143,7 @@ namelist = Namelist({
     },
 
     'spectral_dynamics_nml': {
-        'damping_order': 4,             
+        'damping_order': 4,
         'water_correction_limit': 200.e2,
         'reference_sea_level_press':1.0e5,
         'valid_range_t':[100.,800.],
@@ -162,6 +162,7 @@ namelist = Namelist({
 
 #Lets do a run!
 if __name__=="__main__":
+    cb.compile()
 
     NCORES=16
     RESOLUTION = 'T42', 25
@@ -171,7 +172,6 @@ if __name__=="__main__":
 
     for co2_value in co2_values_list:
 
-        cb.compile()
         exp = Experiment('project_1_byrne_co2_'+str(co2_value), codebase=cb)
         exp.clear_rundir()
 
