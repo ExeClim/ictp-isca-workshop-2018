@@ -164,8 +164,8 @@ namelist = Namelist({
 if __name__=="__main__":
     cb.compile()
 
-    NCORES=16
-    RESOLUTION = 'T42', 40
+    NCORES=8
+    RESOLUTION = 'T21', 18
 
     mld_values_list = [20.,5.]
 
