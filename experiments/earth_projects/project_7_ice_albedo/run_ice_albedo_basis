@@ -5,7 +5,7 @@
 #PBS -r n
 ### resource limits: amount of memory and CPU time ([[h:]m:]s).
 ####PBS -l mem=850mb
-#PBS -l walltime=0:60:00
+#PBS -l walltime=24:00:00
 ### send me email when job begins, ends and fails
 #PBS -m bea
 #PBS -M sit204@exeter.ac.uk

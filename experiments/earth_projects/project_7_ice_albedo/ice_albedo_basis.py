@@ -171,7 +171,7 @@ if __name__=="__main__":
     cb.compile()
 
     NCORES=16
-    RESOLUTION = 'T42', 40
+    RESOLUTION = 'T21', 40
 
     do_ice_albedo_list = [False, True]
 
