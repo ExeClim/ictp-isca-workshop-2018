@@ -1,27 +1,26 @@
 # Models of Earth using Isca
 
-## `qflux`: Parameterising the effect of ocean heat transport
+## Projects
 
-Isca does not have a dynamic ocean.  The mixed layer at the bottom of the atmosphere has a heat capacity and so can heat up and cool down in response to:
-- Sensible heat flux with the atmosphere
-- Cooling via latent heat of evaporation for water leaving the surface to the atmosphere
-- Radiative heating from incoming solar radiation and heating/cooling from longwave emission of the surface and atmosphere above.
+The `earth_projects` and `planetary_projects` folder each contain example experiments for the 9 group projects. These are not meant as exhaustive experiments, but are for each group to modify as the wish.
 
-There is, however, no horizontal or vertical heat transport as there is in the true climate, where oceanic currents provide a method of meridional heat transport.
+## Running on Argo
 
-We can parameterise the heat transport of the ocean with an analytic form \[Merlis et al (2013)\]
-$$ \nabla \cot \mathbf{F_Q} =  \frac{Q_0}{\cos\theta}\left(1 - \frac{2\theta^2}{\theta_0^2} \right) \exp{\left(-\frac{\theta^2}{\theta_0^2} \right)}, $$
-moving heat from the equator to the pole at constant rate.
-$Q_0$ and $\theta_0$ are tuneable parameters that control the amplitude and size of equatorial warm pool respectively.
+To run a given experiment on Argo, it must be submitted to the queue. To do this:
 
-The experiment `qflux.py` runs two instances of the Isca model, with the q-flux parameterisation on and off.  If you wish, you can change the parameter values within the Python script.
+## Analysis
 
-To compile the code, after loading the Isca environment, at the command line type:
+Analysis is to be run on the Argo log-in node. Simple analysis scripts using `python` with the `xarray` module have been provided in the `analysis` folder:
 
-`$ python qflux.py --compile`
+* `analyse_single_experiment.py` reads in the data from a single experiment and makes simple plots
+* `analyse_multiple_experiments.py` reads in data from 2 experiments and compares them
+* `analyse_functions.py` is a collection of useful analysis functions, which you are encouraged to add things to.
 
-To run the experiments for a set number of months (in this case, 24) on a set number of cores (16 is optimal for this resolution), type (or submit a batch job to the cluster)
+If you don't want to use python, other programs are available:
 
-`$ python qflux.py --up-to --run 24 -n 16`
-
-Output from these experiments can be found in `$GFDL_DATA/qflux_{on,off}` which we can analyse with the `qflux_analysis.py` script.
+* CDO - `module load cdo`
+* Matlab (2011) - `module load matlab`
+* Grads - `module load grads`
+* ncl (5.2.1, 6.0.0, 6.3.0) - `module load ncl/6.3.0/gnu/4.4.7`
+* R (2.15, 3.1.2, 3.3.1) - `module load R`
+* IDL is **not available** on Argo

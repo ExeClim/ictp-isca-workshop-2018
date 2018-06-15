@@ -7,11 +7,11 @@ from isca import IscaCodeBase, DiagTable, Experiment, Namelist, GFDL_BASE
 base_dir = os.path.dirname(os.path.realpath(__file__))
 # a CodeBase can be a directory on the computer,
 # useful for iterative development
-#cb = IscaCodeBase.from_directory(GFDL_BASE)
+cb = IscaCodeBase.from_directory(GFDL_BASE)
 
 # or it can point to a specific git repo and commit id.
 # This method should ensure future, independent, reproducibility of results.
-cb = IscaCodeBase.from_repo(repo='https://github.com/ExeClim/Isca', commit='86893cc')
+# cb = IscaCodeBase.from_repo(repo='https://github.com/ExeClim/Isca', commit='86893cc')
 
 # compilation depends on computer specific settings.  The $GFDL_ENV
 # environment variable is used to determine which `$GFDL_BASE/src/extra/env` file
@@ -31,6 +31,7 @@ diag.add_file('atmos_monthly', 30, 'days', time_units='days')
 diag.add_field('dynamics', 'ps', time_avg=True)
 diag.add_field('dynamics', 'bk')
 diag.add_field('dynamics', 'pk')
+diag.add_field('dynamics', 'zsurf')
 diag.add_field('atmosphere', 'precipitation', time_avg=True)
 diag.add_field('mixed_layer', 't_surf', time_avg=True)
 diag.add_field('dynamics', 'sphum', time_avg=True)

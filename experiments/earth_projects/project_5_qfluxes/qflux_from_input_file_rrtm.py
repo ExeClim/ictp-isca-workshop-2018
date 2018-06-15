@@ -7,11 +7,11 @@ from isca import IscaCodeBase, DiagTable, Experiment, Namelist, GFDL_BASE
 base_dir = os.path.dirname(os.path.realpath(__file__))
 # a CodeBase can be a directory on the computer,
 # useful for iterative development
-#cb = IscaCodeBase.from_directory(GFDL_BASE)
+cb = IscaCodeBase.from_directory(GFDL_BASE)
 
 # or it can point to a specific git repo and commit id.
 # This method should ensure future, independent, reproducibility of results.
-cb = IscaCodeBase.from_repo(repo='https://github.com/ExeClim/Isca', commit='86893cc')
+# cb = IscaCodeBase.from_repo(repo='https://github.com/ExeClim/Isca', commit='86893cc')
 
 # compilation depends on computer specific settings.  The $GFDL_ENV
 # environment variable is used to determine which `$GFDL_BASE/src/extra/env` file
@@ -31,6 +31,7 @@ diag.add_file('atmos_monthly', 30, 'days', time_units='days')
 diag.add_field('dynamics', 'ps', time_avg=True)
 diag.add_field('dynamics', 'bk')
 diag.add_field('dynamics', 'pk')
+diag.add_field('dynamics', 'zsurf')
 diag.add_field('atmosphere', 'precipitation', time_avg=True)
 diag.add_field('mixed_layer', 't_surf', time_avg=True)
 diag.add_field('dynamics', 'sphum', time_avg=True)
@@ -168,7 +169,7 @@ if __name__=="__main__":
     NCORES=16
     RESOLUTION = 'T42', 40
 
-    qflux_file_list = ['merlis_schneider_30_16']
+    qflux_file_list = ['merlis_schneider_30_16', 'off']
 
     for qflux_file_name in qflux_file_list:
 
@@ -176,13 +177,21 @@ if __name__=="__main__":
         exp.clear_rundir()
 
         exp.diag_table = diag
-        inputfiles.append(os.path.join(base_dir,qflux_file_name+'.nc'))
-        exp.inputfiles = inputfiles
 
-        exp.namelist = namelist.copy()
-        exp.namelist['mixed_layer_nml']['load_qflux'] = True
-        exp.namelist['mixed_layer_nml']['time_varying_qflux'] = False
-        exp.namelist['mixed_layer_nml']['qflux_file_name'] = qflux_file_name
+        if qflux_file_name!='off':
+            inputfiles.append(os.path.join(base_dir,qflux_file_name+'.nc'))
+            exp.inputfiles = inputfiles
+
+            exp.namelist = namelist.copy()
+            exp.namelist['mixed_layer_nml']['load_qflux'] = True
+            exp.namelist['mixed_layer_nml']['time_varying_qflux'] = False
+            exp.namelist['mixed_layer_nml']['qflux_file_name'] = qflux_file_name
+        else:
+
+            exp.inputfiles = inputfiles
+
+            exp.namelist = namelist.copy()
+            exp.namelist['mixed_layer_nml']['load_qflux'] = False
 
         exp.set_resolution(*RESOLUTION)
 
