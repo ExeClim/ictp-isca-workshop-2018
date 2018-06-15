@@ -10,9 +10,9 @@
 #PBS -m bea
 #PBS -M sit204@exeter.ac.uk
 ### Queue name (default, ib, ...)
-#PBS -q short
+#PBS -q long
 #############
-HOME=$PBS_O_HOME
+#HOME=$PBS_O_HOME
 ##export PATH=/usr/bin:$PATH
 ###env
 source /etc/profile.d/modules.sh
@@ -21,12 +21,12 @@ export GFDL_WORK=$HOME/workdir_isca
 export GFDL_DATA=$HOME/datadir_isca
 export GFDL_BASE=$HOME/Isca
 cd $HOME/Isca
-echo \"Working directory is $PBS_O_WORKDIR\"
+echo \"Working directory is $SLURM_SUBMIT_DIR\"
 ##cd $PBS_O_WORKDIR
 module load intel/2017
 export PATH=/opt/ESMF/7.0.2/intel/2017/bin:$PATH
 export LD_LIBRARY_PATH=/opt/ESMF/7.0.2/intel/2017/lib:$LD_LIBRARY_PATH
-module load anaconda
+module load anaconda3/5.1.0
 source activate pyi3
 echo Running on host `hostname`
 echo Time is `date`
