@@ -6,7 +6,39 @@ The `earth_projects` and `planetary_projects` folder each contain example experi
 
 ## Running on Argo
 
-To run a given experiment on Argo, it must be submitted to the queue. To do this:
+To run a given experiment on Argo, it **must not** be run on the log in node, but must be submitted to the job queue. To so this, use the command `sbatch` in the following way:
+
+1. Create a python experiment file
+2. Modify an existing job submission script to point to this experiment file
+3. run `sbatch NAME_OF_SUBMISSION_SCRIPT` on Argo
+4. A file called `slurm-****.out` will then be created and updated as the script progresses.
+
+Useful commands to check the status of jobs on Argo:
+
+```
+squeue -u `whoami`
+``` 
+will show the status of all jobs belonging to you (`whoami` returns your user name).
+
+```
+scontrol show jobid 5921
+```
+shows details about job number 5921. 
+
+```
+sinfo -p QUEUENAME
+```
+shows info about the nodes available in the queue named QUEUENAME (e.g. `long`)
+
+```
+scontrol show node node140
+```
+will show information about a specific node (e.g. node140).
+
+```
+scancel 1234
+```
+will cancel the pending or running job with jobid 1234.
 
 ## Analysis
 
