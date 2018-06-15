@@ -113,7 +113,7 @@ if __name__=="__main__":
 
     grav_earth_multiple = [1, 2]
 
-    for grav_scale in make_symmetric_values_list:
+    for grav_scale in grav_earth_multiple:
 
         exp = Experiment('project_2_grav_earth_multiple_'+str(grav_scale), codebase=cb)
         exp.clear_rundir()
