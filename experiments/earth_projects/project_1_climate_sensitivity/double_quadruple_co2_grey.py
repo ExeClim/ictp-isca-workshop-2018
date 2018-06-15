@@ -163,7 +163,7 @@ namelist = Namelist({
 #Lets do a run!
 if __name__=="__main__":
 
-    NCORES=16
+    NCORES=8
     RESOLUTION = 'T42', 25
 
 
