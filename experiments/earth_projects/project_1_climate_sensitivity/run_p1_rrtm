@@ -5,7 +5,7 @@
 #PBS -r n
 ### resource limits: amount of memory and CPU time ([[h:]m:]s).
 ####PBS -l mem=850mb
-#PBS -l walltime=0:60:00
+#PBS -l walltime=24:00:00
 ### send me email when job begins, ends and fails
 #PBS -m bea
 #PBS -M sit204@exeter.ac.uk
@@ -33,4 +33,4 @@ echo Running on host `hostname`
 echo Time is `date`
 echo Directory is `pwd`
 cd $HOME/ictp-isca-workshop-2018/experiments/earth_projects/project_1_climate_sensitivity
-$HOME/envs/pyi3/bin/python double_quadruple_co2_grey.py
+$HOME/envs/pyi3/bin/python double_quadruple_co2_rrtm.py
