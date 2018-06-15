@@ -21,6 +21,6 @@ If you don't want to use python, other programs are available:
 * CDO - `module load cdo`
 * Matlab (2011) - `module load matlab`
 * Grads - `module load grads`
-* ncl (5.2.1, 6.0.0, 6.3.0) - `module load ncl`
+* ncl (5.2.1, 6.0.0, 6.3.0) - `module load ncl/6.3.0/gnu/4.4.7`
 * R (2.15, 3.1.2, 3.3.1) - `module load R`
 * IDL is **not available** on Argo
