@@ -1,5 +1,13 @@
+import os
+import sys
+
 from netCDF4 import Dataset
 import numpy as np
+
+from isca import GFDL_BASE
+
+sys.path.insert(0, os.path.join(GFDL_BASE, 'src', 'extra', 'python', 'scripts'))
+
 import gauss_grid as gg
 
 def output_qflux_field(file_name_out, lats, lons, latbs, lonbs, qflux_field):
@@ -73,7 +81,7 @@ def create_model_grid(t_res):
 
         for lonb_idx in range(len(lons)):
             lonb[lonb_idx] = lons[lonb_idx]-delta_lon / 2.
-        lonb[-1] = lons[-1] + delta_lon / 2.  
+        lonb[-1] = lons[-1] + delta_lon / 2.
 
 
     latb = [latb_entry[0] for latb_entry in latb_temp]

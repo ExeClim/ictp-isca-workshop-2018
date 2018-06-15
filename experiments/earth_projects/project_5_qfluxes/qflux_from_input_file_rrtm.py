@@ -177,22 +177,17 @@ if __name__=="__main__":
         exp.clear_rundir()
 
         exp.diag_table = diag
+        exp.namelist = namelist.copy()
 
         if qflux_file_name!='off':
             inputfiles.append(os.path.join(base_dir,qflux_file_name+'.nc'))
-            exp.inputfiles = inputfiles
-
-            exp.namelist = namelist.copy()
             exp.namelist['mixed_layer_nml']['load_qflux'] = True
             exp.namelist['mixed_layer_nml']['time_varying_qflux'] = False
             exp.namelist['mixed_layer_nml']['qflux_file_name'] = qflux_file_name
         else:
-
-            exp.inputfiles = inputfiles
-
-            exp.namelist = namelist.copy()
             exp.namelist['mixed_layer_nml']['load_qflux'] = False
 
+        exp.inputfiles = inputfiles
         exp.set_resolution(*RESOLUTION)
 
         exp.run(1, use_restart=False, num_cores=NCORES)
