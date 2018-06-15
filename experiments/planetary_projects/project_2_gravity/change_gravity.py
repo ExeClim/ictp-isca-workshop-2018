@@ -107,7 +107,7 @@ if __name__=="__main__":
     cb.compile()
 
     NCORES=16
-    RESOLUTION = 'T42', 25
+    RESOLUTION = 'T21', 25
 
     earth_grav = 9.80
 
