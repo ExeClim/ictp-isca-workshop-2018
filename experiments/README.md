@@ -39,6 +39,10 @@ will show information about a specific node (e.g. node140).
 scancel 1234
 ```
 will cancel the pending or running job with jobid 1234.
+```
+quota -u `whoami`
+```
+will check your disk quota (20GB per account)
 
 ## Analysis
 
