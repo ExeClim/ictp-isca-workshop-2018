@@ -124,6 +124,8 @@ namelist = Namelist({
         'rad_scheme':  'frierson',        #Select radiation scheme to use
         'atm_abs': 0.2,                      # Add a bit of solar absorption of sw
         'do_seasonal':  False,          #do_seasonal=false uses the p2 insolation profile from Frierson 2006. do_seasonal=True uses the GFDL astronomy module to calculate seasonally-varying insolation.
+        'equinox_day':0.75,
+        'use_time_average_coszen',True,
     },
 
     # FMS Framework configuration
