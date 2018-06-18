@@ -173,7 +173,7 @@ if __name__=="__main__":
     NCORES=16
     RESOLUTION = 'T21', 40
 
-    do_ice_albedo_list = [False, True]
+    do_ice_albedo_list = [False]
 
     for do_ice_albedo in do_ice_albedo_list:
 
