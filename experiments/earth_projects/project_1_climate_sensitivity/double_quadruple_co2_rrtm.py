@@ -42,7 +42,8 @@ diag.add_field('dynamics', 'vor', time_avg=True)
 diag.add_field('dynamics', 'div', time_avg=True)
 diag.add_field('dynamics', 'height', time_avg=True)
 diag.add_field('rrtm_radiation', 'co2', time_avg=True)
-
+diag.add_field('rrtm_radiation', 'coszen', time_avg=True)
+diag.add_field('rrtm_radiation', 'olr', time_avg=True)
 
 #Empty the run directory ready to run
 
@@ -167,7 +168,7 @@ if __name__=="__main__":
     cb.compile()
 
     NCORES=16
-    RESOLUTION = 'T42', 40
+    RESOLUTION = 'T21', 40
 
     co2_values_list = [350.,700.,1400.]
 
