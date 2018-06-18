@@ -21,7 +21,7 @@ cb = IscaCodeBase.from_directory(GFDL_BASE)
 # create an Experiment object to handle the configuration of model parameters
 # and output diagnostics
 
-inputfiles = [os.path.join(GFDL_BASE,'input/rrtm_input_files/ozone_1990.nc'),os.path.join(GFDL_BASE,'input/land_masks/era_land_t42.nc')]
+inputfiles = [os.path.join(GFDL_BASE,'input/rrtm_input_files/ozone_1990.nc'),os.path.join(GFDL_BASE,'input/land_masks/era_land_t21.nc')]
 
 #Tell model how to write diagnostics
 diag = DiagTable()
@@ -41,6 +41,7 @@ diag.add_field('dynamics', 'temp', time_avg=True)
 diag.add_field('dynamics', 'vor', time_avg=True)
 diag.add_field('dynamics', 'div', time_avg=True)
 diag.add_field('dynamics', 'height', time_avg=True)
+diag.add_field('rrtm_radiation', 'coszen', time_avg=True)
 
 #Empty the run directory ready to run
 
@@ -69,7 +70,7 @@ namelist = Namelist({
         'do_rrtm_radiation':True,
         'convection_scheme': 'FULL_BETTS_MILLER', #Use the full Betts-miller convection schemei
         'land_option': 'input',                      #Use land mask from input file
-        'land_file_name': 'INPUT/era_land_t42.nc',   #Tell model where to find input file
+        'land_file_name': 'INPUT/era_land_t21.nc',   #Tell model where to find input file
         'land_roughness_prefactor': 10.0,            #How much rougher to make land than ocean
     },
 
@@ -169,7 +170,7 @@ namelist = Namelist({
     },
 
     'spectral_init_cond_nml': {
-        'topog_file_name' : 'era_land_t42.nc', #Name of land input file, which will also contain topography if generated using Isca's `land_file_generator_fn.py' routine.
+        'topog_file_name' : 'era_land_t21.nc', #Name of land input file, which will also contain topography if generated using Isca's `land_file_generator_fn.py' routine.
         'topography_option' : 'input', #Tell model to get topography from input file
     },
 
@@ -184,8 +185,7 @@ if __name__=="__main__":
     cb.compile()
 
     NCORES=16
-    RESOLUTION = 'T42', 25
-
+    RESOLUTION = 'T21', 40
     omega_values_list = ['normal', 'reversed']
     omega_normal = 7.2921150e-5
 
