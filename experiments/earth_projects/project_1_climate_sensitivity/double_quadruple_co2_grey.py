@@ -42,7 +42,8 @@ diag.add_field('dynamics', 'vor', time_avg=True)
 diag.add_field('dynamics', 'div', time_avg=True)
 diag.add_field('dynamics', 'height', time_avg=True)
 diag.add_field('two_stream', 'co2', time_avg=True)
-
+diag.add_field('two_stream', 'coszen', time_avg=True)
+diag.add_field('two_stream', 'olr', time_avg=True)
 
 #Define values for the 'core' namelist
 namelist = Namelist({
