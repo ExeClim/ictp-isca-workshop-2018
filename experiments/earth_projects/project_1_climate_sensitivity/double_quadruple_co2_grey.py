@@ -97,8 +97,8 @@ namelist = Namelist({
         'tconst' : 285.,
         'prescribe_initial_dist':True,
         'evaporation':True,
-        'depth': 2.5,                          #Depth of mixed layer used
-        'albedo_value': 0.38,                  #Albedo value used
+        'depth': 2.,                          #Depth of mixed layer used
+        'albedo_value': 0.25,                  #Albedo value used
     },
 
     'qe_moist_convection_nml': {
@@ -128,7 +128,7 @@ namelist = Namelist({
         'atm_abs': 0.2,                      # Add a bit of solar absorption of sw
         'do_seasonal':  True,          #do_seasonal=false uses the p2 insolation profile from Frierson 2006. do_seasonal=True uses the GFDL astronomy module to calculate seasonally-varying insolation.
         'equinox_day':0.75,
-        'use_time_average_coszen',True,
+        'use_time_average_coszen':True,
     },
 
     # FMS Framework configuration

@@ -101,7 +101,7 @@ namelist = Namelist({
         'tconst' : 285.,
         'prescribe_initial_dist':True,
         'evaporation':True,
-        'depth': 5., #Use shallow mixed-layer depth
+        'depth': 2., #Use shallow mixed-layer depth
         'albedo_value': 0.25, #set albedo value
         'do_qflux' : False, #Do not use prescribed form for q-fluxes
     },
@@ -174,7 +174,7 @@ if __name__=="__main__":
 
     for co2_value in co2_values_list:
 
-        exp = Experiment('project_1_rrtm_co2_'+str(co2_value), codebase=cb)
+        exp = Experiment('project_1_rrtm_co2_long_'+str(co2_value), codebase=cb)
         exp.clear_rundir()
 
         exp.diag_table = diag
