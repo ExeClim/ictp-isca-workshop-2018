@@ -118,6 +118,7 @@ def check_global_integral_near_zero(qflux_in, lon, lat, lonb, latb):
 
     if global_average!=0.:
         print('warning - global average of qflux field is not exactly zero, but it = ', global_average)
+        print('area integral of qflux should be close to zero as it is really the divergence of a flux, which should integrate to zero on a sphere.')
 
 def merlis_scheider_qflux(lons, lats, qflux_amp, qflux_width):
 
