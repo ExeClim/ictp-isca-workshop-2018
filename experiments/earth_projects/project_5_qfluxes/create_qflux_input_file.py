@@ -91,6 +91,34 @@ def create_model_grid(t_res):
 
     return lons, lats, lonb, latb
 
+def check_global_integral_near_zero(qflux_in, lon, lat, lonb, latb):
+
+    lonb_1 = lonb[1::]
+    lonb_2 = lonb[0:-1]
+
+    delta_lon = lonb_1 - lonb_2
+
+    latb_1 = latb[1::]
+    latb_2 = latb[0:-1]
+
+    delta_lat = latb_1 - latb_2
+
+    delta_lon_2d, delta_lat_2d = np.meshgrid(delta_lon, delta_lat)
+    lon_2d, latb_1_2d = np.meshgrid(lon,latb_1)
+    lon_2d, latb_2_2d = np.meshgrid(lon,latb_2)
+
+    xsize = np.absolute(np.deg2rad(delta_lon_2d))*(np.sin(np.deg2rad(latb_1_2d))-np.sin(np.deg2rad(latb_2_2d)))
+    ysize = 1.
+
+    area_array = xsize*ysize
+
+    weighted_qflux = qflux_in * area_array
+
+    global_average = np.mean(weighted_qflux) / np.mean(area_array)
+
+    if global_average!=0.:
+        print('warning - global average of qflux field is not exactly zero, but it = ', global_average)
+
 def merlis_scheider_qflux(lons, lats, qflux_amp, qflux_width):
 
     lon_2d, lat_2d = np.meshgrid(lons,lats)
@@ -108,6 +136,7 @@ if __name__=="__main__":
 
     lons, lats, lonbs, latbs = create_model_grid(t_res)
     qflux_field = merlis_scheider_qflux(lons, lats, 30., 16.)
+    check_global_integral_near_zero(qflux_field, lons, lats, lonbs, latbs)
     output_qflux_field(file_name_out, lats, lons, latbs, lonbs, qflux_field)
 
 
