@@ -129,6 +129,7 @@ namelist = Namelist({
         'do_seasonal':  True,          #do_seasonal=false uses the p2 insolation profile from Frierson 2006. do_seasonal=True uses the GFDL astronomy module to calculate seasonally-varying insolation.
         'equinox_day':0.75,
         'use_time_average_coszen':True,
+        'bog_a':0.1627,
     },
 
     # FMS Framework configuration
