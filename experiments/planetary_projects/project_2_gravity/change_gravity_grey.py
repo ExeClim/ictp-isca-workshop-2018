@@ -123,8 +123,9 @@ if __name__=="__main__":
 
         exp.namelist = namelist.copy()
 
-        #Note that only gravity is changed here, but what else should be kept constant in order to isolate the effect of gravity alone?
-
+        exp.namelist['constants_nml']['pstd']     = 1.013250E+06 * grav_scale
+        exp.namelist['constants_nml']['pstd_mks'] = 101325.0 * grav_scale
+        exp.namelist['spectral_dynamics_nml']['reference_sea_level_press'] = 101325.0 * grav_scale
         exp.namelist['constants_nml']['grav'] = earth_grav * grav_scale
 
         exp.set_resolution(*RESOLUTION)
