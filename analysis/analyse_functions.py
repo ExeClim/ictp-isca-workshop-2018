@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pdb
 import time
+import calendar_calc as cal
 
 def open_experiment(exp_folder_name, start_file, end_file, file_name):
+    """Simple function to open netcdf files as one dataset object in xarray"""
 
     base_dir = os.environ['GFDL_DATA']
 
@@ -17,9 +19,36 @@ def open_experiment(exp_folder_name, start_file, end_file, file_name):
     if not(all(files_exist)):
         raise EOFError('EXITING BECAUSE OF MISSING FILES', [files[elem] for elem in range(len(files_exist)) if not files_exist[elem]])
 
-    ds = xar.open_mfdataset(files, decode_times=False)
+    ds = xar.open_mfdataset(files, decode_times=False)  
+
+    add_extra_time_axes(ds, file_name)
 
     return ds
+
+def add_extra_time_axes(ds_in, file_name):
+    """Function that adds extra time axes to xarray coordinates, making actions such as 
+    `groupby('seasons').mean('time')` possible, even with the model's 360_day calendar.
+    """
+
+    if 'atmos_monthly' in file_name:
+        ds_in.attrs['data_type']='monthly'
+    elif 'atmos_daily' in file_name:
+        ds_in.attrs['data_type']='daily' 
+
+    date_arr = cal.day_number_to_date(ds_in.time, calendar_type=ds_in.time.calendar_type, units_in=ds_in.time.units)
+
+    seasons_arr = cal.month_to_season(date_arr.month, ds_in.attrs['data_type'])
+
+    ds_in.coords['dayofyear'] = (('time'),date_arr.dayofyear)
+    ds_in.coords['months'] = (('time'),date_arr.month)
+    ds_in.coords['years'] = (('time'),date_arr.year)
+    ds_in.coords['seasons'] = (('time'), seasons_arr)
+
+    ds_in.coords['seq_days'] = (('time'),cal.recurring_to_sequential(date_arr.dayofyear))    
+    ds_in.coords['seq_months'] = (('time'),cal.recurring_to_sequential(date_arr.month))
+    ds_in.coords['seq_years'] = (('time'),cal.recurring_to_sequential(date_arr.year))    
+    ds_in.coords['seq_seasons'] = (('time'),cal.recurring_to_sequential(seasons_arr))
+
 
 def global_average_lat_lon(ds_in, var_name):
 
@@ -56,8 +85,11 @@ def cell_area(dataset_in, radius = 6371.e3):
     dataset_in['delta_lon'] = (('lon'), delta_lon)
     dataset_in['delta_lat'] = (('lat'), delta_lat)
 
-    xsize = radius*np.absolute(np.deg2rad(dataset_in['delta_lon']))*np.cos(np.deg2rad(dataset_in['lat']))
-    ysize = radius*np.absolute(np.deg2rad(dataset_in['delta_lat']))
+    dataset_in['latb_1'] = (('lat'), latb_1)
+    dataset_in['latb_2'] = (('lat'), latb_2)
+
+    xsize = radius*np.absolute(np.deg2rad(dataset_in['delta_lon']))*(np.sin(np.deg2rad(dataset_in['latb_1']))-np.sin(np.deg2rad(dataset_in['latb_2'])))
+    ysize = radius
 
     area_array = xsize*ysize
 
