@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -N pro_7
+#PBS -N project_5
 #PBS -l nodes=1:ppn=16
 ### Declare job non-rerunable
 #PBS -r n
@@ -32,5 +32,5 @@ source activate pyi3
 echo Running on host `hostname`
 echo Time is `date`
 echo Directory is `pwd`
-cd $HOME/ictp-isca-workshop-2018/experiments/earth_projects/project_7_ice_albedo
-$HOME/envs/pyi3/bin/python ice_albedo_basis.py
+cd $HOME/ictp-isca-workshop-2018/experiments/earth_projects/project_5_qfluxes
+$HOME/envs/pyi3/bin/python qflux_from_input_file_rrtm.py
