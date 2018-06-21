@@ -16,10 +16,7 @@
 ##export PATH=/usr/bin:$PATH
 ###env
 #source /etc/profile.d/modules.sh
-export GFDL_ENV=ictp-argo
-export GFDL_WORK=$HOME/workdir_isca
-export GFDL_DATA=$HOME/datadir_isca
-export GFDL_BASE=$HOME/Isca
+source $HOME/.bashrc
 cd $HOME/Isca
 echo \"Working directory is $SLURM_SUBMIT_DIR\"
 ##cd $PBS_O_WORKDIR
