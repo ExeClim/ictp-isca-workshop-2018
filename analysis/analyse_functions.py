@@ -37,8 +37,6 @@ def open_reanalysis(file_path):
 
     ds = xar.open_dataset(files[0],decode_times = False)
 
-    pdb.set_trace()
-
     add_extra_time_axes(ds, files[0])
 
     return ds
