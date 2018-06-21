@@ -5,29 +5,20 @@ import numpy as np
 from isca import IscaCodeBase, DiagTable, Experiment, Namelist, GFDL_BASE
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
-# a CodeBase can be a directory on the computer,
-# useful for iterative development
+
+#Step 1: Point the python script to the location of the code (the bash environment variable GFDL_BASE is that directory)
 cb = IscaCodeBase.from_directory(GFDL_BASE)
 
-# or it can point to a specific git repo and commit id.
-# This method should ensure future, independent, reproducibility of results.
-# cb = IscaCodeBase.from_repo(repo='https://github.com/ExeClim/Isca', commit='86893cc')
+#Step 2. Provide the necessary inputs for the model to run:
 
-# compilation depends on computer specific settings.  The $GFDL_ENV
-# environment variable is used to determine which `$GFDL_BASE/src/extra/env` file
-# is used to load the correct compilers.  The env file is always loaded from
-# $GFDL_BASE and not the checked out git repo.
-
-# create an Experiment object to handle the configuration of model parameters
-# and output diagnostics
 
 inputfiles = [os.path.join(GFDL_BASE,'input/rrtm_input_files/ozone_1990.nc')]
 
-#Tell model how to write diagnostics
+#Define the diagnostics we want to be output from the model
 diag = DiagTable()
 diag.add_file('atmos_monthly', 30, 'days', time_units='days')
 
-#Tell model which diagnostics to write
+#Tell model which diagnostics to write to those files
 diag.add_field('dynamics', 'ps', time_avg=True)
 diag.add_field('dynamics', 'bk')
 diag.add_field('dynamics', 'pk')
@@ -43,9 +34,8 @@ diag.add_field('dynamics', 'div', time_avg=True)
 diag.add_field('dynamics', 'height', time_avg=True)
 
 
-#Empty the run directory ready to run
 
-#Define values for the 'core' namelist
+#Step 3. Define the namelist options, which will get passed to the fortran to configure the model.
 namelist = Namelist({
     'main_nml':{
      'days'   : 30,
@@ -166,30 +156,35 @@ namelist = Namelist({
     },
 })
 
-#Lets do a run!
-if __name__=="__main__":
-    cb.compile()
+#Step 4. Compile the fortran code
+cb.compile()
 
-    NCORES=16
-    RESOLUTION = 'T21', 40
+#Number of cores to run the model on
+NCORES=16
 
-    do_ice_albedo_list = [False]
+#Set the horizontal and vertical resolution to be used. 
+RESOLUTION = 'T21', 40
 
-    for do_ice_albedo in do_ice_albedo_list:
+do_ice_albedo_list = [False]
 
-        exp = Experiment('project_7_ice_albedo_'+str(do_ice_albedo), codebase=cb)
-        exp.clear_rundir()
+for do_ice_albedo in do_ice_albedo_list:
+    #Set up the experiment object, with the first argument being the experiment name.
+    #This will be the name of the folder that the data will appear in.
 
-        exp.diag_table = diag
-        exp.inputfiles = inputfiles
+    exp = Experiment('project_7_ice_albedo_'+str(do_ice_albedo), codebase=cb)
+    exp.clear_rundir()
 
-        exp.namelist = namelist.copy()
+    exp.diag_table = diag
+    exp.inputfiles = inputfiles
+
+    exp.namelist = namelist.copy()
 
 #         Here a namelist option will have to be written and toggled on and off, depending on the changes made by the group to the fortran code.
 #         exp.namelist['mixed_layer_nml']['ice_albedo_feedback'] = do_ice_albedo
 
-        exp.set_resolution(*RESOLUTION)
+    exp.set_resolution(*RESOLUTION)
+    #Step 6. Run the fortran code
 
-        exp.run(1, use_restart=False, num_cores=NCORES)
-        for i in range(2,121):
-            exp.run(i, num_cores=NCORES)
+    exp.run(1, use_restart=False, num_cores=NCORES)
+    for i in range(2,121):
+        exp.run(i, num_cores=NCORES)

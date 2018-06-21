@@ -5,29 +5,20 @@ import numpy as np
 from isca import IscaCodeBase, DiagTable, Experiment, Namelist, GFDL_BASE
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
-# a CodeBase can be a directory on the computer,
-# useful for iterative development
+
+#Step 1: Point the python script to the location of the code (the bash environment variable GFDL_BASE is that directory)
 cb = IscaCodeBase.from_directory(GFDL_BASE)
 
-# or it can point to a specific git repo and commit id.
-# This method should ensure future, independent, reproducibility of results.
-# cb = DryCodeBase.from_repo(repo='https://github.com/isca/isca', commit='isca1.1')
+#Step 2. Provide the necessary inputs for the model to run:
 
-# compilation depends on computer specific settings.  The $GFDL_ENV
-# environment variable is used to determine which `$GFDL_BASE/src/extra/env` file
-# is used to load the correct compilers.  The env file is always loaded from
-# $GFDL_BASE and not the checked out git repo.
-
-# create an Experiment object to handle the configuration of model parameters
-# and output diagnostics
 
 inputfiles=[]
 
-#Tell model how to write diagnostics
+#Define the diagnostics we want to be output from the model
 diag = DiagTable()
 diag.add_file('atmos_monthly', 30, 'days', time_units='days')
 
-#Tell model which diagnostics to write
+#Tell model which diagnostics to write to those files
 diag.add_field('dynamics', 'ps', time_avg=True)
 diag.add_field('dynamics', 'bk')
 diag.add_field('dynamics', 'pk')
@@ -40,7 +31,7 @@ diag.add_field('dynamics', 'vor', time_avg=True)
 diag.add_field('dynamics', 'div', time_avg=True)
 diag.add_field('dynamics', 'height', time_avg=True)
 
-#Define values for the 'core' namelist
+#Step 3. Define the namelist options, which will get passed to the fortran to configure the model.
 namelist = Namelist({
     'main_nml': {
         'dt_atmos': 600,
@@ -102,30 +93,35 @@ namelist = Namelist({
 })
 
 
-#Lets do a run!
-if __name__=="__main__":
-    cb.compile()
+#Step 4. Compile the fortran code
+cb.compile()
 
-    NCORES=16
-    RESOLUTION = 'T21', 25
+#Number of cores to run the model on
+NCORES=16
 
-    earth_rot_rate = 7.2921150e-5
+#Set the horizontal and vertical resolution to be used. 
+RESOLUTION = 'T21', 25
 
-    rotation_rates_earth_multiple = [1, 2, 0.5]
+earth_rot_rate = 7.2921150e-5
 
-    for rot_rate_scale in rotation_rates_earth_multiple:
+rotation_rates_earth_multiple = [1, 2, 0.5]
 
-        exp = Experiment('project_1_rotation_rate_earth_multiple_'+str(rot_rate_scale), codebase=cb)
-        exp.clear_rundir()
+for rot_rate_scale in rotation_rates_earth_multiple:
+    #Set up the experiment object, with the first argument being the experiment name.
+    #This will be the name of the folder that the data will appear in.
 
-        exp.diag_table = diag
-        exp.inputfiles = inputfiles
+    exp = Experiment('project_1_rotation_rate_earth_multiple_'+str(rot_rate_scale), codebase=cb)
+    exp.clear_rundir()
 
-        exp.namelist = namelist.copy()
-        exp.namelist['constants_nml']['omega'] = earth_rot_rate * rot_rate_scale
+    exp.diag_table = diag
+    exp.inputfiles = inputfiles
 
-        exp.set_resolution(*RESOLUTION)
+    exp.namelist = namelist.copy()
+    exp.namelist['constants_nml']['omega'] = earth_rot_rate * rot_rate_scale
 
-        exp.run(1, use_restart=False, num_cores=NCORES)
-        for i in range(2,121):
-            exp.run(i, num_cores=NCORES)
+    exp.set_resolution(*RESOLUTION)
+    #Step 6. Run the fortran code
+
+    exp.run(1, use_restart=False, num_cores=NCORES)
+    for i in range(2,121):
+        exp.run(i, num_cores=NCORES)
