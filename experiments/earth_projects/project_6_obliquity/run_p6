@@ -8,7 +8,7 @@
 #PBS -l walltime=24:00:00
 ### send me email when job begins, ends and fails
 #PBS -m bea
-#PBS -M sit204@exeter.ac.uk
+#PBS -M YOUR_EMAIL@HERE
 ### Queue name (default, ib, ...)
 #PBS -q esp
 #############
