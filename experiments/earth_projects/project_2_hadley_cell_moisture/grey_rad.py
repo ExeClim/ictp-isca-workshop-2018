@@ -161,27 +161,26 @@ namelist = Namelist({
 })
 
 #Lets do a run!
-if __name__=="__main__":
-    cb.compile()
+cb.compile()
 
-    NCORES=16
-    RESOLUTION = 'T42', 25
+NCORES=16
+RESOLUTION = 'T21', 25
 
-    make_symmetric_values_list = [False, True]
+make_symmetric_values_list = [False, True]
 
-    for make_symmetric_value in make_symmetric_values_list:
+for make_symmetric_value in make_symmetric_values_list:
 
-        exp = Experiment('project_2_frierson_make_symmetric_'+str(make_symmetric_value), codebase=cb)
-        exp.clear_rundir()
+    exp = Experiment('project_2_frierson_make_symmetric_'+str(make_symmetric_value), codebase=cb)
+    exp.clear_rundir()
 
-        exp.diag_table = diag
-        exp.inputfiles = inputfiles
+    exp.diag_table = diag
+    exp.inputfiles = inputfiles
 
-        exp.namelist = namelist.copy()
-        exp.namelist['spectral_dynamics_nml']['make_symmetric'] = make_symmetric_value
+    exp.namelist = namelist.copy()
+    exp.namelist['spectral_dynamics_nml']['make_symmetric'] = make_symmetric_value
 
-        exp.set_resolution(*RESOLUTION)
+    exp.set_resolution(*RESOLUTION)
 
-        exp.run(1, use_restart=False, num_cores=NCORES)
-        for i in range(2,121):
-            exp.run(i, num_cores=NCORES)
+    exp.run(1, use_restart=False, num_cores=NCORES)
+    for i in range(2,121):
+        exp.run(i, num_cores=NCORES)

@@ -163,33 +163,32 @@ namelist = Namelist({
 })
 
 #Lets do a run!
-if __name__=="__main__":
-    cb.compile()
+cb.compile()
 
-    NCORES=16
-    RESOLUTION = 'T42', 40
+NCORES=16
+RESOLUTION = 'T42', 40
 
-    qflux_file_list = ['merlis_schneider_30_16', 'off']
+qflux_file_list = ['merlis_schneider_30_16', 'off']
 
-    for qflux_file_name in qflux_file_list:
+for qflux_file_name in qflux_file_list:
 
-        exp = Experiment('project_5_rrtm_input_file_qflux_'+str(qflux_file_name), codebase=cb)
-        exp.clear_rundir()
+    exp = Experiment('project_5_rrtm_input_file_qflux_'+str(qflux_file_name), codebase=cb)
+    exp.clear_rundir()
 
-        exp.diag_table = diag
-        exp.namelist = namelist.copy()
+    exp.diag_table = diag
+    exp.namelist = namelist.copy()
 
-        if qflux_file_name!='off':
-            inputfiles.append(os.path.join(base_dir,qflux_file_name+'.nc'))
-            exp.namelist['mixed_layer_nml']['load_qflux'] = True
-            exp.namelist['mixed_layer_nml']['time_varying_qflux'] = False
-            exp.namelist['mixed_layer_nml']['qflux_file_name'] = qflux_file_name
-        else:
-            exp.namelist['mixed_layer_nml']['load_qflux'] = False
+    if qflux_file_name!='off':
+        inputfiles.append(os.path.join(base_dir,qflux_file_name+'.nc'))
+        exp.namelist['mixed_layer_nml']['load_qflux'] = True
+        exp.namelist['mixed_layer_nml']['time_varying_qflux'] = False
+        exp.namelist['mixed_layer_nml']['qflux_file_name'] = qflux_file_name
+    else:
+        exp.namelist['mixed_layer_nml']['load_qflux'] = False
 
-        exp.inputfiles = inputfiles
-        exp.set_resolution(*RESOLUTION)
+    exp.inputfiles = inputfiles
+    exp.set_resolution(*RESOLUTION)
 
-        exp.run(1, use_restart=False, num_cores=NCORES)
-        for i in range(2,121):
-            exp.run(i, num_cores=NCORES)
+    exp.run(1, use_restart=False, num_cores=NCORES)
+    for i in range(2,121):
+        exp.run(i, num_cores=NCORES)

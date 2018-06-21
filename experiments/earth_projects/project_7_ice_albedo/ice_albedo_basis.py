@@ -167,29 +167,28 @@ namelist = Namelist({
 })
 
 #Lets do a run!
-if __name__=="__main__":
-    cb.compile()
+cb.compile()
 
-    NCORES=16
-    RESOLUTION = 'T21', 40
+NCORES=16
+RESOLUTION = 'T21', 40
 
-    do_ice_albedo_list = [False]
+do_ice_albedo_list = [False]
 
-    for do_ice_albedo in do_ice_albedo_list:
+for do_ice_albedo in do_ice_albedo_list:
 
-        exp = Experiment('project_7_ice_albedo_'+str(do_ice_albedo), codebase=cb)
-        exp.clear_rundir()
+    exp = Experiment('project_7_ice_albedo_'+str(do_ice_albedo), codebase=cb)
+    exp.clear_rundir()
 
-        exp.diag_table = diag
-        exp.inputfiles = inputfiles
+    exp.diag_table = diag
+    exp.inputfiles = inputfiles
 
-        exp.namelist = namelist.copy()
+    exp.namelist = namelist.copy()
 
 #         Here a namelist option will have to be written and toggled on and off, depending on the changes made by the group to the fortran code.
 #         exp.namelist['mixed_layer_nml']['ice_albedo_feedback'] = do_ice_albedo
 
-        exp.set_resolution(*RESOLUTION)
+    exp.set_resolution(*RESOLUTION)
 
-        exp.run(1, use_restart=False, num_cores=NCORES)
-        for i in range(2,121):
-            exp.run(i, num_cores=NCORES)
+    exp.run(1, use_restart=False, num_cores=NCORES)
+    for i in range(2,121):
+        exp.run(i, num_cores=NCORES)

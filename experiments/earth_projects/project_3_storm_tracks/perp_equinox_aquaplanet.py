@@ -181,33 +181,32 @@ namelist = Namelist({
 })
 
 #Lets do a run!
-if __name__=="__main__":
-    cb.compile()
+cb.compile()
 
-    NCORES=16
-    RESOLUTION = 'T21', 40
-    omega_values_list = ['normal', 'reversed']
-    omega_normal = 7.2921150e-5
+NCORES=16
+RESOLUTION = 'T21', 40
+omega_values_list = ['normal', 'reversed']
+omega_normal = 7.2921150e-5
 
-    for omega_value in omega_values_list:
+for omega_value in omega_values_list:
 
-        if omega_value=='reversed':
-            omega_passed = -omega_normal
-        else:
-            omega_passed = omega_normal
+    if omega_value=='reversed':
+        omega_passed = -omega_normal
+    else:
+        omega_passed = omega_normal
 
 
-        exp = Experiment('project_3_omega_'+str(omega_value), codebase=cb)
-        exp.clear_rundir()
+    exp = Experiment('project_3_omega_'+str(omega_value), codebase=cb)
+    exp.clear_rundir()
 
-        exp.diag_table = diag
-        exp.inputfiles = inputfiles
+    exp.diag_table = diag
+    exp.inputfiles = inputfiles
 
-        exp.namelist = namelist.copy()
-        exp.namelist['constants_nml']['omega'] = omega_passed
+    exp.namelist = namelist.copy()
+    exp.namelist['constants_nml']['omega'] = omega_passed
 
-        exp.set_resolution(*RESOLUTION)
+    exp.set_resolution(*RESOLUTION)
 
-        exp.run(1, use_restart=False, num_cores=NCORES)
-        for i in range(2,241):
-            exp.run(i, num_cores=NCORES)
+    exp.run(1, use_restart=False, num_cores=NCORES)
+    for i in range(2,241):
+        exp.run(i, num_cores=NCORES)

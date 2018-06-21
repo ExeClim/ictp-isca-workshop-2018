@@ -164,27 +164,26 @@ namelist = Namelist({
 })
 
 #Lets do a run!
-if __name__=="__main__":
-    cb.compile()
+cb.compile()
 
-    NCORES=16
-    RESOLUTION = 'T21', 40
+NCORES=16
+RESOLUTION = 'T21', 40
 
-    co2_values_list = [350.,700.,1400.]
+co2_values_list = [350.,700.,1400.]
 
-    for co2_value in co2_values_list:
+for co2_value in co2_values_list:
 
-        exp = Experiment('project_1_rrtm_co2_long_'+str(co2_value), codebase=cb)
-        exp.clear_rundir()
+    exp = Experiment('project_1_rrtm_co2_long_'+str(co2_value), codebase=cb)
+    exp.clear_rundir()
 
-        exp.diag_table = diag
-        exp.inputfiles = inputfiles
+    exp.diag_table = diag
+    exp.inputfiles = inputfiles
 
-        exp.namelist = namelist.copy()
-        exp.namelist['rrtm_radiation_nml']['co2ppmv'] = co2_value
+    exp.namelist = namelist.copy()
+    exp.namelist['rrtm_radiation_nml']['co2ppmv'] = co2_value
 
-        exp.set_resolution(*RESOLUTION)
+    exp.set_resolution(*RESOLUTION)
 
-        exp.run(1, use_restart=False, num_cores=NCORES)
-        for i in range(2,241):
-            exp.run(i, num_cores=NCORES)
+    exp.run(1, use_restart=False, num_cores=NCORES)
+    for i in range(2,241):
+        exp.run(i, num_cores=NCORES)

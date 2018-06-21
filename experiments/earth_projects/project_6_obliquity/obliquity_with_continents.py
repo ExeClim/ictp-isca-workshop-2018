@@ -21,7 +21,7 @@ cb = IscaCodeBase.from_directory(GFDL_BASE)
 # create an Experiment object to handle the configuration of model parameters
 # and output diagnostics
 
-inputfiles = [os.path.join(GFDL_BASE,'input/rrtm_input_files/ozone_1990.nc'),os.path.join(GFDL_BASE,'input/land_masks/era_land_t42.nc')]
+inputfiles = [os.path.join(GFDL_BASE,'input/rrtm_input_files/ozone_1990.nc'),os.path.join(GFDL_BASE,'input/land_masks/era_land_t21.nc')]
 
 #Tell model how to write diagnostics
 diag = DiagTable()
@@ -69,7 +69,7 @@ namelist = Namelist({
         'do_rrtm_radiation':True,
         'convection_scheme': 'FULL_BETTS_MILLER', #Use the full Betts-miller convection schemei
         'land_option': 'input',                      #Use land mask from input file
-        'land_file_name': 'INPUT/era_land_t42.nc',   #Tell model where to find input file
+        'land_file_name': 'INPUT/era_land_t21.nc',   #Tell model where to find input file
         'land_roughness_prefactor': 10.0,            #How much rougher to make land than ocean
     },
 
@@ -167,7 +167,7 @@ namelist = Namelist({
     },
 
     'spectral_init_cond_nml': {
-        'topog_file_name' : 'era_land_t42.nc', #Name of land input file, which will also contain topography if generated using Isca's `land_file_generator_fn.py' routine.
+        'topog_file_name' : 'era_land_t21.nc', #Name of land input file, which will also contain topography if generated using Isca's `land_file_generator_fn.py' routine.
         'topography_option' : 'input', #Tell model to get topography from input file
     },
 
@@ -178,27 +178,26 @@ namelist = Namelist({
 })
 
 #Lets do a run!
-if __name__=="__main__":
-    cb.compile()
+cb.compile()
 
-    NCORES=16
-    RESOLUTION = 'T42', 40
+NCORES=16
+RESOLUTION = 'T21', 40
 
-    obliq_values_list = [23.439, 45]
+obliq_values_list = [23.439, 45]
 
-    for obliq_value in obliq_values_list:
+for obliq_value in obliq_values_list:
 
-        exp = Experiment('project_6_obliq_'+str(obliq_value), codebase=cb)
-        exp.clear_rundir()
+    exp = Experiment('project_6_obliq_'+str(obliq_value), codebase=cb)
+    exp.clear_rundir()
 
-        exp.diag_table = diag
-        exp.inputfiles = inputfiles
+    exp.diag_table = diag
+    exp.inputfiles = inputfiles
 
-        exp.namelist = namelist.copy()
-        exp.namelist['astronomy_nml']['obliq'] = obliq_value
+    exp.namelist = namelist.copy()
+    exp.namelist['astronomy_nml']['obliq'] = obliq_value
 
-        exp.set_resolution(*RESOLUTION)
+    exp.set_resolution(*RESOLUTION)
 
-        exp.run(1, use_restart=False, num_cores=NCORES)
-        for i in range(2,121):
-            exp.run(i, num_cores=NCORES)
+    exp.run(1, use_restart=False, num_cores=NCORES)
+    for i in range(2,121):
+        exp.run(i, num_cores=NCORES)

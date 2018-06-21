@@ -161,27 +161,26 @@ namelist = Namelist({
 })
 
 #Lets do a run!
-if __name__=="__main__":
-    cb.compile()
+cb.compile()
 
-    NCORES=8
-    RESOLUTION = 'T21', 18
+NCORES=16
+RESOLUTION = 'T21', 18
 
-    mld_values_list = [20.,5.]
+mld_values_list = [20.,5.]
 
-    for mld_value in mld_values_list:
+for mld_value in mld_values_list:
 
-        exp = Experiment('project_4_rrtm_mld_'+str(mld_value), codebase=cb)
-        exp.clear_rundir()
+    exp = Experiment('project_4_rrtm_mld_'+str(mld_value), codebase=cb)
+    exp.clear_rundir()
 
-        exp.diag_table = diag
-        exp.inputfiles = inputfiles
+    exp.diag_table = diag
+    exp.inputfiles = inputfiles
 
-        exp.namelist = namelist.copy()
-        exp.namelist['mixed_layer_nml']['depth'] = mld_value
+    exp.namelist = namelist.copy()
+    exp.namelist['mixed_layer_nml']['depth'] = mld_value
 
-        exp.set_resolution(*RESOLUTION)
+    exp.set_resolution(*RESOLUTION)
 
-        exp.run(1, use_restart=False, num_cores=NCORES)
-        for i in range(2,121):
-            exp.run(i, num_cores=NCORES)
+    exp.run(1, use_restart=False, num_cores=NCORES)
+    for i in range(2,121):
+        exp.run(i, num_cores=NCORES)

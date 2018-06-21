@@ -166,27 +166,26 @@ namelist = Namelist({
 })
 
 #Lets do a run!
-if __name__=="__main__":
-    cb.compile()
+cb.compile()
 
-    NCORES=16
-    RESOLUTION = 'T21', 40
+NCORES=16
+RESOLUTION = 'T21', 40
 
-    obliq_values_list = [23.439, 45]
+obliq_values_list = [23.439, 45]
 
-    for obliq_value in obliq_values_list:
+for obliq_value in obliq_values_list:
 
-        exp = Experiment('project_6_aquaplanet_obliq_'+str(obliq_value), codebase=cb)
-        exp.clear_rundir()
+    exp = Experiment('project_6_aquaplanet_obliq_'+str(obliq_value), codebase=cb)
+    exp.clear_rundir()
 
-        exp.diag_table = diag
-        exp.inputfiles = inputfiles
+    exp.diag_table = diag
+    exp.inputfiles = inputfiles
 
-        exp.namelist = namelist.copy()
-        exp.namelist['astronomy_nml']['obliq'] = obliq_value
+    exp.namelist = namelist.copy()
+    exp.namelist['astronomy_nml']['obliq'] = obliq_value
 
-        exp.set_resolution(*RESOLUTION)
+    exp.set_resolution(*RESOLUTION)
 
-        exp.run(1, use_restart=False, num_cores=NCORES)
-        for i in range(2,121):
-            exp.run(i, num_cores=NCORES)
+    exp.run(1, use_restart=False, num_cores=NCORES)
+    for i in range(2,121):
+        exp.run(i, num_cores=NCORES)

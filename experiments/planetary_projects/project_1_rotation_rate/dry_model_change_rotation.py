@@ -103,29 +103,28 @@ namelist = Namelist({
 
 
 #Lets do a run!
-if __name__=="__main__":
-    cb.compile()
+cb.compile()
 
-    NCORES=16
-    RESOLUTION = 'T21', 25
+NCORES=16
+RESOLUTION = 'T21', 25
 
-    earth_rot_rate = 7.2921150e-5
+earth_rot_rate = 7.2921150e-5
 
-    rotation_rates_earth_multiple = [1, 2, 0.5]
+rotation_rates_earth_multiple = [1, 2, 0.5]
 
-    for rot_rate_scale in rotation_rates_earth_multiple:
+for rot_rate_scale in rotation_rates_earth_multiple:
 
-        exp = Experiment('project_1_rotation_rate_earth_multiple_'+str(rot_rate_scale), codebase=cb)
-        exp.clear_rundir()
+    exp = Experiment('project_1_rotation_rate_earth_multiple_'+str(rot_rate_scale), codebase=cb)
+    exp.clear_rundir()
 
-        exp.diag_table = diag
-        exp.inputfiles = inputfiles
+    exp.diag_table = diag
+    exp.inputfiles = inputfiles
 
-        exp.namelist = namelist.copy()
-        exp.namelist['constants_nml']['omega'] = earth_rot_rate * rot_rate_scale
+    exp.namelist = namelist.copy()
+    exp.namelist['constants_nml']['omega'] = earth_rot_rate * rot_rate_scale
 
-        exp.set_resolution(*RESOLUTION)
+    exp.set_resolution(*RESOLUTION)
 
-        exp.run(1, use_restart=False, num_cores=NCORES)
-        for i in range(2,121):
-            exp.run(i, num_cores=NCORES)
+    exp.run(1, use_restart=False, num_cores=NCORES)
+    for i in range(2,121):
+        exp.run(i, num_cores=NCORES)
