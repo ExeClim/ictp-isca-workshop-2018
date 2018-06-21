@@ -25,6 +25,24 @@ def open_experiment(exp_folder_name, start_file, end_file, file_name):
 
     return ds
 
+def open_reanalysis(file_path):
+    """Simple function to open netcdf files as one dataset object in xarray"""
+
+    files = [file_path]
+
+    files_exist=[os.path.isfile(s) for s in files]
+
+    if not(all(files_exist)):
+        raise EOFError('EXITING BECAUSE OF MISSING FILES', [files[elem] for elem in range(len(files_exist)) if not files_exist[elem]])
+
+    ds = xar.open_dataset(files[0],decode_times = False)
+
+    pdb.set_trace()
+
+    add_extra_time_axes(ds, files[0])
+
+    return ds
+
 def add_extra_time_axes(ds_in, file_name):
     """Function that adds extra time axes to xarray coordinates, making actions such as 
     `groupby('seasons').mean('time')` possible, even with the model's 360_day calendar.
@@ -35,7 +53,12 @@ def add_extra_time_axes(ds_in, file_name):
     elif 'atmos_daily' in file_name:
         ds_in.attrs['data_type']='daily' 
 
-    date_arr = cal.day_number_to_date(ds_in.time, calendar_type=ds_in.time.calendar_type, units_in=ds_in.time.units)
+    try:
+        calendar_type = ds_in.time.calendar_type
+    except:
+        calendar_type = ds_in.time.calendar
+
+    date_arr = cal.day_number_to_date(ds_in.time, calendar_type=calendar_type, units_in=ds_in.time.units)
 
     seasons_arr = cal.month_to_season(date_arr.month, ds_in.attrs['data_type'])
 
