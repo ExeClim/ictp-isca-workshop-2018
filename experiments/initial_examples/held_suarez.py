@@ -98,38 +98,37 @@ namelist = Namelist({
 })
 
 
-if __name__=="__main__":
-    #Step 4. Compile the fortran code
-    cb.compile()
+#Step 4. Compile the fortran code
+cb.compile()
 
-    #Step 5. Prepare the experiment object, including experiment name
+#Step 5. Prepare the experiment object, including experiment name
+
+#Number of cores to run the model on
+NCORES=4 
+
+#Set the horizontal and vertical resolution to be used. 
+#Format is 'T**', n_levels
+# where ** is the spectral resolution, e.g. 'T21' and n_levels is the number of vertical levels to be used
+RESOLUTION = 'T21', 25
+
+#Set up the experiment object, with the first argument being the experiment name.
+#This will be the name of the folder that the data will appear in.
+
+exp = Experiment('held_suarez_example_experiment', codebase=cb)
+exp.clear_rundir()
+
+exp.diag_table = diag
+exp.inputfiles = inputfiles
+
+exp.namelist = namelist.copy()
+
+exp.set_resolution(*RESOLUTION)
     
-    #Number of cores to run the model on
-    NCORES=4 
+#Step 6. Run the fortran code
+#The model is run in small chunks, one chunk per `exp.run` command.
+#The length of time corresponding to each chunk is set in `main_nml` above. 
+#The current example will therefore run 12 sets of 30 days.
 
-    #Set the horizontal and vertical resolution to be used. 
-    #Format is 'T**', n_levels
-    # where ** is the spectral resolution, e.g. 'T21' and n_levels is the number of vertical levels to be used
-    RESOLUTION = 'T21', 25
-
-    #Set up the experiment object, with the first argument being the experiment name.
-    #This will be the name of the folder that the data will appear in.
-
-    exp = Experiment('held_suarez_example_experiment', codebase=cb)
-    exp.clear_rundir()
-
-    exp.diag_table = diag
-    exp.inputfiles = inputfiles
-
-    exp.namelist = namelist.copy()
-
-    exp.set_resolution(*RESOLUTION)
-    
-    #Step 6. Run the fortran code
-    #The model is run in small chunks, one chunk per `exp.run` command.
-    #The length of time corresponding to each chunk is set in `main_nml` above. 
-    #The current example will therefore run 12 sets of 30 days.
-
-    exp.run(1, use_restart=False, num_cores=NCORES)
-    for i in range(2,13):
-        exp.run(i, num_cores=NCORES)
+exp.run(1, use_restart=False, num_cores=NCORES)
+for i in range(2,25):
+    exp.run(i, num_cores=NCORES)
