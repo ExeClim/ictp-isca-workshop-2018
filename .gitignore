@@ -102,3 +102,6 @@ ENV/
 
 .vscode/
 *.log
+
+.*.py
+slurm*

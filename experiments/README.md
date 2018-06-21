@@ -1,27 +1,62 @@
 # Models of Earth using Isca
 
-## `qflux`: Parameterising the effect of ocean heat transport
+## Projects
 
-Isca does not have a dynamic ocean.  The mixed layer at the bottom of the atmosphere has a heat capacity and so can heat up and cool down in response to:
-- Sensible heat flux with the atmosphere
-- Cooling via latent heat of evaporation for water leaving the surface to the atmosphere
-- Radiative heating from incoming solar radiation and heating/cooling from longwave emission of the surface and atmosphere above.
+The `earth_projects` and `planetary_projects` folder each contain example experiments for the 9 group projects. These are not meant as exhaustive experiments, but are for each group to modify as the wish.
 
-There is, however, no horizontal or vertical heat transport as there is in the true climate, where oceanic currents provide a method of meridional heat transport.
+## Running on Argo
 
-We can parameterise the heat transport of the ocean with an analytic form \[Merlis et al (2013)\]
-$$ \nabla \cot \mathbf{F_Q} =  \frac{Q_0}{\cos\theta}\left(1 - \frac{2\theta^2}{\theta_0^2} \right) \exp{\left(-\frac{\theta^2}{\theta_0^2} \right)}, $$
-moving heat from the equator to the pole at constant rate.
-$Q_0$ and $\theta_0$ are tuneable parameters that control the amplitude and size of equatorial warm pool respectively.
+To run a given experiment on Argo, it **must not** be run on the log in node, but must be submitted to the job queue. To so this, use the command `sbatch` in the following way:
 
-The experiment `qflux.py` runs two instances of the Isca model, with the q-flux parameterisation on and off.  If you wish, you can change the parameter values within the Python script.
+1. Create a python experiment file
+2. Modify an existing job submission script to point to this experiment file
+3. run `sbatch NAME_OF_SUBMISSION_SCRIPT` on Argo
+4. A file called `slurm-****.out` will then be created and updated as the script progresses.
 
-To compile the code, after loading the Isca environment, at the command line type:
+Useful commands to check the status of jobs on Argo:
 
-`$ python qflux.py --compile`
+```
+squeue -u `whoami`
+``` 
+will show the status of all jobs belonging to you (`whoami` returns your user name).
 
-To run the experiments for a set number of months (in this case, 24) on a set number of cores (16 is optimal for this resolution), type (or submit a batch job to the cluster)
+```
+scontrol show jobid 5921
+```
+shows details about job number 5921. 
 
-`$ python qflux.py --up-to --run 24 -n 16`
+```
+sinfo -p QUEUENAME
+```
+shows info about the nodes available in the queue named QUEUENAME (e.g. `long`)
 
-Output from these experiments can be found in `$GFDL_DATA/qflux_{on,off}` which we can analyse with the `qflux_analysis.py` script.
+```
+scontrol show node node140
+```
+will show information about a specific node (e.g. node140).
+
+```
+scancel 1234
+```
+will cancel the pending or running job with jobid 1234.
+```
+quota -u `whoami`
+```
+will check your disk quota (20GB per account)
+
+## Analysis
+
+Analysis is to be run on the Argo log-in node. Simple analysis scripts using `python` with the `xarray` module have been provided in the `analysis` folder:
+
+* `analyse_single_experiment.py` reads in the data from a single experiment and makes simple plots
+* `analyse_multiple_experiments.py` reads in data from 2 experiments and compares them
+* `analyse_functions.py` is a collection of useful analysis functions, which you are encouraged to add things to.
+
+If you don't want to use python, other programs are available:
+
+* CDO - `module load cdo`
+* Matlab (2011) - `module load matlab`
+* Grads - `module load grads`
+* ncl (5.2.1, 6.0.0, 6.3.0) - `module load ncl/6.3.0/gnu/4.4.7`
+* R (2.15, 3.1.2, 3.3.1) - `module load R`
+* IDL is **not available** on Argo

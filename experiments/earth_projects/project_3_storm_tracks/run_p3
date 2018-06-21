@@ -1,0 +1,33 @@
+#!/bin/bash
+#PBS -N project_1_grey
+#PBS -l nodes=1:ppn=16
+### Declare job non-rerunable
+#PBS -r n
+### resource limits: amount of memory and CPU time ([[h:]m:]s).
+####PBS -l mem=850mb
+#PBS -l walltime=24:00:00
+### send me email when job begins, ends and fails
+#PBS -m bea
+#PBS -M YOUR_EMAIL@HERE
+### Queue name (default, ib, ...)
+#PBS -q esp
+#############
+#HOME=$PBS_O_HOME
+##export PATH=/usr/bin:$PATH
+###env
+#source /etc/profile.d/modules.sh
+source $HOME/.bashrc
+cd $HOME/Isca
+echo \"Working directory is $SLURM_SUBMIT_DIR\"
+##cd $PBS_O_WORKDIR
+module load intel/2017
+export PATH=/opt/ESMF/7.0.2/intel/2017/bin:$PATH
+export LD_LIBRARY_PATH=/opt/ESMF/7.0.2/intel/2017/lib:$LD_LIBRARY_PATH
+module purge
+module load anaconda3/5.1.0
+source activate pyi3
+echo Running on host `hostname`
+echo Time is `date`
+echo Directory is `pwd`
+cd $HOME/ictp-isca-workshop-2018/experiments/earth_projects/project_3_storm_tracks
+$HOME/envs/pyi3/bin/python perp_equinox_aquaplanet.py
