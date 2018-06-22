@@ -109,7 +109,7 @@ for grav_scale in grav_earth_multiple:
     #Set up the experiment object, with the first argument being the experiment name.
     #This will be the name of the folder that the data will appear in.
 
-    exp = Experiment('project_2_grav_earth_multiple_'+str(grav_scale), codebase=cb)
+    exp = Experiment('project_2_h_s_grav_earth_multiple_'+str(grav_scale), codebase=cb)
     exp.clear_rundir()
 
     exp.diag_table = diag
@@ -117,6 +117,7 @@ for grav_scale in grav_earth_multiple:
 
     exp.namelist = namelist.copy()
 
+    exp.namelist['hs_forcing_nml']['P00']     = 1.e5 * grav_scale
     exp.namelist['constants_nml']['pstd']     = 1.013250E+06 * grav_scale
     exp.namelist['constants_nml']['pstd_mks'] = 101325.0 * grav_scale
     exp.namelist['spectral_dynamics_nml']['reference_sea_level_press'] = 101325.0 * grav_scale

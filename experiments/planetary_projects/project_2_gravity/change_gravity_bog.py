@@ -11,7 +11,7 @@ cb = IscaCodeBase.from_directory(GFDL_BASE)
 
 #Step 2. Provide the necessary inputs for the model to run:
 
-inputfiles = [os.path.join(GFDL_BASE,'input/rrtm_input_files/ozone_1990.nc')]
+inputfiles=[]
 
 #Define the diagnostics we want to be output from the model
 diag = DiagTable()
@@ -31,7 +31,9 @@ diag.add_field('dynamics', 'temp', time_avg=True)
 diag.add_field('dynamics', 'vor', time_avg=True)
 diag.add_field('dynamics', 'div', time_avg=True)
 diag.add_field('dynamics', 'height', time_avg=True)
-
+diag.add_field('two_stream', 'co2', time_avg=True)
+diag.add_field('two_stream', 'coszen', time_avg=True)
+diag.add_field('two_stream', 'olr', time_avg=True)
 
 #Step 3. Define the namelist options, which will get passed to the fortran to configure the model.
 namelist = Namelist({
@@ -44,7 +46,6 @@ namelist = Namelist({
      'current_date' : [1,1,1,0,0,0],
      'calendar' : 'thirty_day'
     },
-
     'idealized_moist_phys_nml': {
         'do_damping': True,
         'turb':True,
@@ -54,9 +55,8 @@ namelist = Namelist({
         'roughness_mom':3.21e-05,
         'roughness_heat':3.21e-05,
         'roughness_moist':3.21e-05,
-        'two_stream_gray': False, #Use RRTM, not grey radiation:
-        'do_rrtm_radiation':True,
-        'convection_scheme': 'FULL_BETTS_MILLER', #Use the full Betts-miller convection schemei
+        'two_stream_gray': True,     #Use the grey radiation scheme
+        'convection_scheme': 'SIMPLE_BETTS_MILLER', #Use simple Betts miller convection
     },
 
     'vert_turb_driver_nml': {
@@ -75,26 +75,26 @@ namelist = Namelist({
     'surface_flux_nml': {
         'use_virtual_temp': False,
         'do_simple': True,
-        'old_dtaudv': True,
+        'old_dtaudv': True
     },
 
     'atmosphere_nml': {
         'idealized_moist_model': True
     },
 
+    #Use a large mixed-layer depth, and the Albedo of the CTRL case in Jucker & Gerber, 2017
     'mixed_layer_nml': {
         'tconst' : 285.,
         'prescribe_initial_dist':True,
         'evaporation':True,
-        'depth': 20., #Use shallow mixed-layer depth
-        'albedo_value': 0.25, #set albedo value
-        'do_qflux' : False, #Do not use prescribed form for q-fluxes
+        'depth': 2.,                          #Depth of mixed layer used
+        'albedo_value': 0.38,                  #Albedo value used
     },
 
-    'betts_miller_nml': {
-       'rhbm': .7   ,
-       'do_simp': False,
-       'do_shallower': True,
+    'qe_moist_convection_nml': {
+        'rhbm':0.7,
+        'Tmin':160.,
+        'Tmax':350.
     },
 
     'lscale_cond_nml': {
@@ -108,16 +108,17 @@ namelist = Namelist({
 
     'damping_driver_nml': {
         'do_rayleigh': True,
-        'trayfric': -0.5,              # neg. value: time in *days*
-        'sponge_pbottom':  150., #Setting the lower pressure boundary for the model sponge layer in Pa.
+        'trayfric': -0.25,              # neg. value: time in *days*
+        'sponge_pbottom':  5000., #Bottom of the model's sponge down to 50hPa
         'do_conserve_energy': True,
     },
 
-    'rrtm_radiation_nml': {
-        'do_read_ozone':True,
-        'ozone_file':'ozone_1990',
-        'solr_cnst': 1360., #s set solar constant to 1360, rather than default of 1368.22
-        'dt_rad': 4320, #Use 4320 as RRTM radiation timestep
+    'two_stream_gray_rad_nml': {
+        'rad_scheme':  'byrne',        #Select radiation scheme to use
+        'atm_abs': 0.2,                      # Add a bit of solar absorption of sw
+        'do_seasonal':  True,          #do_seasonal=false uses the p2 insolation profile from Frierson 2006. do_seasonal=True uses the GFDL astronomy module to calculate seasonally-varying insolation.
+        'equinox_day':0.75,
+        'use_time_average_coszen':True,
         'solday':90,
     },
 
@@ -139,22 +140,23 @@ namelist = Namelist({
         'damping_order': 4,
         'water_correction_limit': 200.e2,
         'reference_sea_level_press':1.0e5,
-        'num_levels':40,
         'valid_range_t':[100.,800.],
         'initial_sphum':[2.e-6],
-        'vert_coord_option':'uneven_sigma',
-        'surf_res':0.2, #Parameter that sets the vertical distribution of sigma levels
+        'vert_coord_option':'input',#Use the vertical levels from Frierson 2006
+        'surf_res':0.5,
         'scale_heights' : 11.0,
         'exponent':7.0,
-        'robert_coeff':0.03,
-        'ocean_topog_smoothing':0.8,
+        'robert_coeff':0.03
     },
+    'vert_coordinate_nml': {
+        'bk': [0.000000, 0.0117665, 0.0196679, 0.0315244, 0.0485411, 0.0719344, 0.1027829, 0.1418581, 0.1894648, 0.2453219, 0.3085103, 0.3775033, 0.4502789, 0.5244989, 0.5977253, 0.6676441, 0.7322627, 0.7900587, 0.8400683, 0.8819111, 0.9157609, 0.9422770, 0.9625127, 0.9778177, 0.9897489, 1.0000000],
+        'pk': [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000],
+       },
     'constants_nml': {
         'grav':9.80,
     },
 
 })
-
 
 #Step 4. Compile the fortran code
 cb.compile()
@@ -167,13 +169,13 @@ RESOLUTION = 'T21', 25
 
 earth_grav = 9.80
 
-grav_earth_multiple = [1, 2]
+grav_earth_multiple = [2, 1, 1.2]
 
 for grav_scale in grav_earth_multiple:
     #Set up the experiment object, with the first argument being the experiment name.
     #This will be the name of the folder that the data will appear in.
 
-    exp = Experiment('project_p2_rrtm_grav_earth_multiple_'+str(grav_scale), codebase=cb)
+    exp = Experiment('project_p2_bog_grav_earth_multiple_'+str(grav_scale), codebase=cb)
     exp.clear_rundir()
 
     exp.diag_table = diag
@@ -185,6 +187,7 @@ for grav_scale in grav_earth_multiple:
     exp.namelist['constants_nml']['pstd_mks'] = 101325.0 * grav_scale
     exp.namelist['spectral_dynamics_nml']['reference_sea_level_press'] = 101325.0 * grav_scale
     exp.namelist['constants_nml']['grav'] = earth_grav * grav_scale
+    exp.namelist['damping_driver_nml']['sponge_pbottom'] =  150. * grav_scale
 
     exp.set_resolution(*RESOLUTION)
     #Step 6. Run the fortran code
@@ -192,3 +195,4 @@ for grav_scale in grav_earth_multiple:
     exp.run(1, use_restart=False, num_cores=NCORES)
     for i in range(2,121):
         exp.run(i, num_cores=NCORES)
+
