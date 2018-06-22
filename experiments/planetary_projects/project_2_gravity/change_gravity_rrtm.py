@@ -40,7 +40,7 @@ namelist = Namelist({
      'hours'  : 0,
      'minutes': 0,
      'seconds': 0,
-     'dt_atmos':720,
+     'dt_atmos':300,
      'current_date' : [1,1,1,0,0,0],
      'calendar' : 'thirty_day'
     },
@@ -50,7 +50,7 @@ namelist = Namelist({
         'turb':True,
         'mixed_layer_bc':True,
         'do_virtual' :False,
-        'do_simple': True,
+        'do_simple': False,
         'roughness_mom':3.21e-05,
         'roughness_heat':3.21e-05,
         'roughness_moist':3.21e-05,
@@ -62,19 +62,19 @@ namelist = Namelist({
     'vert_turb_driver_nml': {
         'do_mellor_yamada': False,     # default: True
         'do_diffusivity': True,        # default: False
-        'do_simple': True,             # default: False
+        'do_simple': False,            # default: False
         'constant_gust': 0.0,          # default: 1.0
         'use_tau': False
     },
 
     'diffusivity_nml': {
         'do_entrain':False,
-        'do_simple': True,
+        'do_simple': False,
     },
 
     'surface_flux_nml': {
         'use_virtual_temp': False,
-        'do_simple': True,
+        'do_simple': False,
         'old_dtaudv': True,
     },
 
@@ -98,26 +98,27 @@ namelist = Namelist({
     },
 
     'lscale_cond_nml': {
-        'do_simple':True,
+        'do_simple':False,
         'do_evap':True
     },
 
     'sat_vapor_pres_nml': {
-        'do_simple':True
+        'do_simple':False,
+        'tcmin':  -223, #Make sure low temperature limit of saturation vapour pressure is low enough that it doesn't cause an error (note that this giant planet has no moisture anyway, so doesn't directly affect calculation.        
+        'tcmax': 350.
     },
 
     'damping_driver_nml': {
         'do_rayleigh': True,
-        'trayfric': -0.5,              # neg. value: time in *days*
+        'trayfric': -0.1,              # neg. value: time in *days*
         'sponge_pbottom':  150., #Setting the lower pressure boundary for the model sponge layer in Pa.
         'do_conserve_energy': True,
     },
 
     'rrtm_radiation_nml': {
-        'do_read_ozone':True,
-        'ozone_file':'ozone_1990',
+        'do_read_ozone':False,
         'solr_cnst': 1360., #s set solar constant to 1360, rather than default of 1368.22
-        'dt_rad': 4320, #Use 4320 as RRTM radiation timestep
+        'dt_rad': 3000, #Use 4320 as RRTM radiation timestep
         'solday':90,
     },
 
@@ -140,7 +141,7 @@ namelist = Namelist({
         'water_correction_limit': 200.e2,
         'reference_sea_level_press':1.0e5,
         'num_levels':40,
-        'valid_range_t':[100.,800.],
+        'valid_range_t':[10.,800.],
         'initial_sphum':[2.e-6],
         'vert_coord_option':'uneven_sigma',
         'surf_res':0.2, #Parameter that sets the vertical distribution of sigma levels
@@ -163,17 +164,17 @@ cb.compile()
 NCORES=16
 
 #Set the horizontal and vertical resolution to be used. 
-RESOLUTION = 'T21', 25
+RESOLUTION = 'T21', 40
 
 earth_grav = 9.80
 
-grav_earth_multiple = [1, 2]
+grav_earth_multiple = [2, 1.2, 1.]
 
 for grav_scale in grav_earth_multiple:
     #Set up the experiment object, with the first argument being the experiment name.
     #This will be the name of the folder that the data will appear in.
 
-    exp = Experiment('project_p2_rrtm_grav_earth_multiple_'+str(grav_scale), codebase=cb)
+    exp = Experiment('project_p2_rrtm_no_ozone_grav_earth_multiple_'+str(grav_scale), codebase=cb)
     exp.clear_rundir()
 
     exp.diag_table = diag
@@ -185,10 +186,14 @@ for grav_scale in grav_earth_multiple:
     exp.namelist['constants_nml']['pstd_mks'] = 101325.0 * grav_scale
     exp.namelist['spectral_dynamics_nml']['reference_sea_level_press'] = 101325.0 * grav_scale
     exp.namelist['constants_nml']['grav'] = earth_grav * grav_scale
+    exp.namelist['damping_driver_nml']['sponge_pbottom'] =  150. * grav_scale
 
     exp.set_resolution(*RESOLUTION)
     #Step 6. Run the fortran code
 
-    exp.run(1, use_restart=False, num_cores=NCORES)
-    for i in range(2,121):
-        exp.run(i, num_cores=NCORES)
+    try:
+        exp.run(1, use_restart=False, num_cores=NCORES)
+        for i in range(2,121):
+            exp.run(i, num_cores=NCORES)
+    except:
+        pass
