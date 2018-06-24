@@ -10,7 +10,7 @@ To run a given experiment on Argo, it **must not** be run on the log in node, bu
 
 1. Create a python experiment file
 2. Modify an existing job submission script to point to this experiment file
-3. run `sbatch NAME_OF_SUBMISSION_SCRIPT` on Argo
+3. run `sbatch --reservation=grp01_4 NAME_OF_SUBMISSION_SCRIPT` on Argo
 4. A file called `slurm-****.out` will then be created and updated as the script progresses.
 
 Useful commands to check the status of jobs on Argo:
