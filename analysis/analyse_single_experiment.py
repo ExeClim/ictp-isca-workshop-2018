@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import analyse_functions as af
 
 #Folder name where data lies. Script will assume this data is in $GFDL_DATA directory
-exp_folder_name = 'held_suarez_example_experiment'
-#exp_folder_name = 'frierson_grey_rad_example_experiment'
+exp_folder_name = 'held_suarez_analysis_example'
+#exp_folder_name = 'frierson_grey_rad_analysis_example'
 
 #First month to be used
 start_file = 1
