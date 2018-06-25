@@ -10,7 +10,7 @@
 #PBS -m bea
 #PBS -M YOUR_EMAIL@HERE
 ### Queue name (default, ib, ...)
-#PBS -q long
+#PBS -q esp
 #############
 #HOME=$PBS_O_HOME
 ##export PATH=/usr/bin:$PATH
